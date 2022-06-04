@@ -170,18 +170,20 @@ public class Item : ScriptableObject
                     item.m_tags.Add(new TagManager.Tag("New Tag"));
 
                     // save
-                    EditorUtility.SetDirty(this);
+                    EditorUtility.SetDirty(item);
                 }
                 GUILayout.EndVertical();
             }
 
-            
-
             //end green box
             GUILayout.EndVertical();
+            
 
-            // draw default inspector
-            //DrawDefaultInspector();
+            // on change save
+            if (GUI.changed)
+            {
+                EditorUtility.SetDirty(item);
+            }
         }
     }
     #endif
