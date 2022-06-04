@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 using System.Text.RegularExpressions;
 // json serialization
 
@@ -78,6 +79,11 @@ public class Item : ScriptableObject
     {
         Item item = ScriptableObject.CreateInstance<Item>();
         item.variantID = Guid.NewGuid().ToString();
+        item.m_id = this.id + "_" + item.variantID;
+        item.m_displayName = this.m_displayName;
+        item.m_description = this.m_description;
+        item.m_icon = this.m_icon;
+        item.m_tags = this.m_tags;
         return item;
     }
 
@@ -87,10 +93,17 @@ public class Item : ScriptableObject
     /// <param name="path">path to save to</param>
     public static void Save(string path, Item item)
     {
+        FileStream file = File.Create(path);
+
         //serialize item
         string json = JsonUtility.ToJson(item);
 
-        System.IO.File.WriteAllText(path, json);
+        //write to file
+        StreamWriter writer = new StreamWriter(file);
+        writer.Write(json);
+        writer.Close();
+
+        file.Close();
     }
 
     /// <summary>
@@ -101,7 +114,8 @@ public class Item : ScriptableObject
     {
         //deserialize item
         string json = System.IO.File.ReadAllText(path);
-        Item item = JsonUtility.FromJson<Item>(json);
+        Item item = ScriptableObject.CreateInstance<Item>();
+        JsonUtility.FromJsonOverwrite(json, item);
 
         return item;
     }
@@ -177,7 +191,7 @@ public class Item : ScriptableObject
 
             //end green box
             GUILayout.EndVertical();
-            
+
 
             // on change save
             if (GUI.changed)
