@@ -17,8 +17,9 @@ public class DatabaseWindow : EditorWindow {
     static string searchText = "";
 
     static Item selected;
+    static public int selectedType;
 
-    public int selectedType;
+    static bool drawDefaultInspector = false;
 
     Vector2 listScroll = Vector2.zero;
     Vector2 itemScroll = Vector2.zero;
@@ -173,6 +174,12 @@ public class DatabaseWindow : EditorWindow {
         itemScroll = GUILayout.BeginScrollView(itemScroll);
         //horiz
         GUILayout.BeginHorizontal();
+        // toggle for default inspector
+        drawDefaultInspector = GUILayout.Toggle(drawDefaultInspector, "Default Inspector");
+
+        // flex space
+        GUILayout.FlexibleSpace();
+
         //label
         GUILayout.Label("Selected: ");
         //disable group
@@ -185,7 +192,16 @@ public class DatabaseWindow : EditorWindow {
         if (selected != null)
         {
             Editor editor = Editor.CreateEditor(selected);
+            if (drawDefaultInspector){
+                editor?.DrawDefaultInspector();
+            }
             editor?.OnInspectorGUI();
+
+            // if selected item id is not the same as its file name, update the file
+            if (selected.id != selected.name)
+            {
+                
+            }
         }
         GUILayout.EndScrollView();
         GUILayout.EndVertical();
@@ -263,7 +279,7 @@ public class DatabaseWindow : EditorWindow {
         if (selected != null)
         {
             var selectedIndex = database.IndexOf(selected);
-            if (selectedIndex != 0)
+            if (selectedIndex > 0 && selectedIndex < database.Count)
             {
                 var selectedItem = database[selectedIndex];
                 database.RemoveAt(selectedIndex);
@@ -273,7 +289,6 @@ public class DatabaseWindow : EditorWindow {
 
         //correct ID values
         for (int i = 0; i < database.Count; i++) {
-            //to lower
             database[i].ValidateID();
         }
 

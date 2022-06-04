@@ -9,10 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70468ca514ed0324c960b68986f34e30, type: 3}
-  m_Name: Item
+  m_Script: {fileID: 11500000, guid: 4f90fa149c377104f9cf9c91644b4e5e, type: 3}
+  m_Name: rangedweapon_0
   m_EditorClassIdentifier: 
-  id: Item_0
-  displayName: New Item
-  description: New Item Description
-  icon: {fileID: 0}
+  m_id: rangedweapon_0
+  m_variantID: 
+  m_displayName: New Item
+  m_description: New Item Description
+  m_icon: {fileID: 0}
+  m_tags: []
+  m_damage: 0

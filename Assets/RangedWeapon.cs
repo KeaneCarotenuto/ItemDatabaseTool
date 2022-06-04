@@ -10,9 +10,10 @@ using System.Linq;
 
 [CreateAssetMenu(fileName = "Weapon", menuName = "Item/New Weapon")]
 #endif
+[Serializable]
 public class RangedWeapon : Item
 {
-    public float m_damage = 0;
+    [SerializeField] public float m_damage = 0;
 
     #if UNITY_EDITOR
     //inspector gui stuff
