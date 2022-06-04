@@ -10,13 +10,13 @@ using System.Linq;
 
 [CreateAssetMenu(fileName = "Weapon", menuName = "Item/New Weapon")]
 #endif
-public class Weapon : Item
+public class RangedWeapon : Item
 {
-    public float damage = 0;
+    public float m_damage = 0;
 
     #if UNITY_EDITOR
     //inspector gui stuff
-    [CustomEditor(typeof(Weapon))]
+    [CustomEditor(typeof(RangedWeapon))]
     public class WeaponEditor : ItemEditor
     {
         public override void OnInspectorGUI()
@@ -33,7 +33,7 @@ public class Weapon : Item
             //damage
             GUILayout.BeginHorizontal();
             GUILayout.Label("Damage: ");
-            ((Weapon)target).damage = EditorGUILayout.FloatField(((Weapon)target).damage);
+            ((RangedWeapon)target).m_damage = EditorGUILayout.FloatField(((RangedWeapon)target).m_damage);
             GUILayout.EndHorizontal();
 
             //end green box

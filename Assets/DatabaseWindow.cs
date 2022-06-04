@@ -61,12 +61,12 @@ public class DatabaseWindow : EditorWindow {
         GUILayout.EndHorizontal();
 
         //Refresh();
-
+        
         //save on change
         if (GUI.changed)
         {
-            EditorUtility.SetDirty(this);
             Refresh();
+            EditorUtility.SetDirty(this);
         }
 
         Event e = Event.current;
@@ -85,7 +85,7 @@ public class DatabaseWindow : EditorWindow {
         GUILayout.BeginHorizontal();
         GUILayout.Label("Items", CustomEditorStyles.center_bold_label);
         //refresh button
-        if (GUILayout.Button("Refresh", GUILayout.MaxWidth(75)))
+        if (GUILayout.Button(new GUIContent("Refresh", "Refreshes the list"), GUILayout.MaxWidth(75)))
         {
             Refresh();
         }
@@ -94,11 +94,27 @@ public class DatabaseWindow : EditorWindow {
         //space
         GUILayout.Space(10);
 
+        GUILayout.BeginHorizontal();
+
+        string[] names = Item.AllTypes.Select(t => t.Name).ToArray();
+        names = names.Concat(new string[] { typeof(Item).Name }).ToArray();
+
+        GUI.backgroundColor = Color.green;
+        if (GUILayout.Button(new GUIContent("Create New", "Create new item of selected type")))
+        {
+            CreateNewItem(names[selectedType]);
+        }
+
+        selectedType = EditorGUILayout.Popup(selectedType,names);
+        GUI.backgroundColor = Color.white;
+
+        GUILayout.EndHorizontal();
+
         //search bar
         GUILayout.BeginHorizontal();
         GUILayout.Label("Search: ", GUILayout.MaxWidth(50));
         searchText = GUILayout.TextField(searchText, GUILayout.MinWidth(100));
-        if (GUILayout.Button("Clear", GUILayout.MaxWidth(75)))
+        if (GUILayout.Button(new GUIContent("Clear", "Clears the search bar"), GUILayout.MaxWidth(75)))
         {
             searchText = "";
         }
@@ -107,7 +123,7 @@ public class DatabaseWindow : EditorWindow {
         for (int i = 0; i < database.Count; i++)
         {
             //if id or display name doesnt match search text, skip
-            if (!database[i].id.ToLower().Contains(searchText.ToLower()) && !database[i].displayName.ToLower().Contains(searchText.ToLower()))
+            if (!database[i].id.ToLower().Contains(searchText.ToLower()) && !database[i].m_displayName.ToLower().Contains(searchText.ToLower()))
             {
                 continue;
             }
@@ -146,22 +162,6 @@ public class DatabaseWindow : EditorWindow {
 
         //space
         GUILayout.Space(10);
-
-        GUILayout.BeginHorizontal();
-
-        string[] names = Item.AllTypes.Select(t => t.Name).ToArray();
-        names = names.Concat(new string[] { typeof(Item).Name }).ToArray();
-
-        GUI.backgroundColor = Color.green;
-        if (GUILayout.Button("Create New"))
-        {
-            CreateNewItem(names[selectedType]);
-        }
-
-        selectedType = EditorGUILayout.Popup(selectedType,names);
-        GUI.backgroundColor = Color.white;
-
-        GUILayout.EndHorizontal();
 
         GUILayout.EndScrollView();
     }
@@ -234,19 +234,47 @@ public class DatabaseWindow : EditorWindow {
             database.Add(asset);
         }
 
-        //sort by id
-        database.Sort((a, b) => a.id.CompareTo(b.id));
+        //sort by id (alphabetical with numbers at the end, :( why was this so hard to do? feels like it should be base feature)
+        database.Sort((x, y) => {
+            string xNumberPortion = Regex.Match(x.id, @"\d+").Value;
+            string yNumberPortion = Regex.Match(y.id, @"\d+").Value;
+
+            string xWordPortion = x.id;
+
+            if (xNumberPortion != "") xWordPortion = x.id.Replace(xNumberPortion, "");
+
+            string yWordPortion = y.id;
+
+            if (yNumberPortion != "") yWordPortion = y.id.Replace(yNumberPortion, "");
+
+            if (xWordPortion == yWordPortion)
+            {
+                if (xNumberPortion == "") xNumberPortion = "0";
+                if (yNumberPortion == "") yNumberPortion = "0";
+                return int.Parse(xNumberPortion).CompareTo(int.Parse(yNumberPortion));
+            } else {
+                return xWordPortion.CompareTo(yWordPortion);
+            }
+        });
     }
 
     static public void ValidateIDs() {
+        // put selected id at the top (Reason: so that when we check for issues, it will be the first to change, in an attempt to not modify other items )
+        if (selected != null)
+        {
+            var selectedIndex = database.IndexOf(selected);
+            if (selectedIndex != 0)
+            {
+                var selectedItem = database[selectedIndex];
+                database.RemoveAt(selectedIndex);
+                database.Insert(0, selectedItem);
+            }
+        }
+
         //correct ID values
         for (int i = 0; i < database.Count; i++) {
             //to lower
-            database[i].id = database[i].id.ToLower();
-            //replace non letters and numbers with _
-            database[i].id = Regex.Replace(database[i].id, @"[^a-zA-Z0-9_]", "_");
-            //replace space with _
-            database[i].id = database[i].id.Replace(" ", "_");
+            database[i].ValidateID();
         }
 
         //correct duplicate IDs

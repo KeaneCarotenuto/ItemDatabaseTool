@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f90fa149c377104f9cf9c91644b4e5e, type: 3}
-  m_Name: Weapon
+  m_Name: RangedWeapon 5
   m_EditorClassIdentifier: 
-  id: item_0
+  id: RangedWeapon_0
   displayName: New Item
   description: New Item Description
   icon: {fileID: 0}
