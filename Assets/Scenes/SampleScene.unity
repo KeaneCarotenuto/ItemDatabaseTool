@@ -152,8 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c3ee0ee3dd0e134aacdfcf3b757d677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemToSpawn: {fileID: 11400000, guid: e072ee54ae7297342a8a95c87f52fd13, type: 2}
-  item: {fileID: 0}
+  item: {fileID: 11400000, guid: e072ee54ae7297342a8a95c87f52fd13, type: 2}
   itemName: 
 --- !u!4 &142403246
 Transform:

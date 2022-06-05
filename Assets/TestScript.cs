@@ -6,13 +6,12 @@ using System.IO;
 
 public class TestScript : MonoBehaviour
 {
-    public Item itemToSpawn = null;
     public Item item = null;
     public string itemName;
 
     private void Awake() {
-        if (item == null) {
-            InstantiateItem();
+        if (item.variantID == "") {
+            item = item.CreateVariant();
         }
     }
 
@@ -46,11 +45,5 @@ public class TestScript : MonoBehaviour
 
             item = Item.Load(itemPath);
         }
-    }
-
-    public void InstantiateItem()
-    {
-        string itemType = itemToSpawn.GetType().Name;
-        item = itemToSpawn.CreateVariant(itemType);
     }
 }

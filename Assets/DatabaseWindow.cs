@@ -19,8 +19,6 @@ public class DatabaseWindow : EditorWindow {
     static Item selected;
     static public int selectedType;
 
-    static bool drawDefaultInspector = false;
-
     Vector2 listScroll = Vector2.zero;
     Vector2 itemScroll = Vector2.zero;
 
@@ -174,34 +172,20 @@ public class DatabaseWindow : EditorWindow {
         itemScroll = GUILayout.BeginScrollView(itemScroll);
         //horiz
         GUILayout.BeginHorizontal();
-        // toggle for default inspector
-        drawDefaultInspector = GUILayout.Toggle(drawDefaultInspector, "Default Inspector");
-
-        // flex space
         GUILayout.FlexibleSpace();
-
-        //label
         GUILayout.Label("Selected: ");
         //disable group
         EditorGUI.BeginDisabledGroup(true);
         selected = EditorGUILayout.ObjectField(selected, typeof(Item), false) as Item;
         EditorGUI.EndDisabledGroup();
+        GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
         //if selected item is not null, show the selected item
         if (selected != null)
         {
             Editor editor = Editor.CreateEditor(selected);
-            if (drawDefaultInspector){
-                editor?.DrawDefaultInspector();
-            }
             editor?.OnInspectorGUI();
-
-            // if selected item id is not the same as its file name, update the file
-            if (selected.id != selected.name)
-            {
-                
-            }
         }
         GUILayout.EndScrollView();
         GUILayout.EndVertical();

@@ -15,9 +15,9 @@ public class RangedWeapon : Item
 {
     [SerializeField] public float m_damage = 0;
 
-    public override Item CreateVariant(string _type)
+    public override Item CreateVariant()
     {
-        RangedWeapon newItem = (RangedWeapon)base.CreateVariant(_type);
+        RangedWeapon newItem = (RangedWeapon)base.CreateVariant();
 
         // make RangedWeapon specific changes
         newItem.m_damage = m_damage;

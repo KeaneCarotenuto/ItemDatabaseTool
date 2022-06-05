@@ -4,12 +4,12 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Reflection;
+using System.Linq;
 // json serialization
 
 #if UNITY_EDITOR
 using UnityEditor;
-using System.Reflection;
-using System.Linq;
 
 #endif
 [Serializable]
@@ -28,10 +28,12 @@ public class Item : ScriptableObject
     {
         //set default values
         id = this.GetType().Name + "_0";
-        m_displayName = "New Item";
+        m_displayName = "New Item EE";
         m_description = "New Item Description";
         m_icon = null;
     }
+
+    [NonSerialized] private bool drawDefaultInspector = false;
 
     [SerializeField] private string m_id = "";
     [SerializeField] public string id
@@ -75,11 +77,13 @@ public class Item : ScriptableObject
     /// Make variant of this item.
     /// </summary>
     /// <returns>The variant.</returns>
-    public virtual Item CreateVariant(string _type)
+    public virtual Item CreateVariant()
     {
-        Item item = (Item)Item.CreateInstance(_type);
+        string typeName = this.GetType().Name;
+        Item item = (Item)Item.CreateInstance(typeName);
+
         item.variantID = Guid.NewGuid().ToString();
-        item.m_id = this.id + "_" + item.variantID;
+        item.m_id = this.id;
         item.m_displayName = this.m_displayName;
         item.m_description = this.m_description;
         item.m_icon = this.m_icon;
@@ -154,6 +158,18 @@ public class Item : ScriptableObject
         {
             Item item = (Item)target;
 
+            // horiz
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            item.drawDefaultInspector = GUILayout.Toggle(item.drawDefaultInspector, "Default Inspector");
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
+
+            if (item.drawDefaultInspector){
+                DrawDefaultInspector();
+            }
+
+
             GUI.backgroundColor = Color.green;
             //green box for item
             GUILayout.BeginVertical("box");
@@ -175,6 +191,11 @@ public class Item : ScriptableObject
                 AssetDatabase.RenameAsset(path, item.id);
             }
             GUILayout.EndHorizontal();
+            // disabled varint id
+            EditorGUI.BeginDisabledGroup(true);
+            item.variantID = EditorGUILayout.TextField("Variant ID: ", item.variantID);
+            EditorGUI.EndDisabledGroup();
+            
             item.m_displayName = EditorGUILayout.TextField("Display Name: ", item.m_displayName);
             item.m_description = EditorGUILayout.TextField("Description: ", item.m_description);
             item.m_icon = EditorGUILayout.ObjectField("Icon: ", item.m_icon, typeof(Sprite), false) as Sprite;
