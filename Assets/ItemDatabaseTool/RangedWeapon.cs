@@ -8,7 +8,6 @@ using UnityEditor;
 using System.Reflection;
 using System.Linq;
 
-[CreateAssetMenu(fileName = "Weapon", menuName = "Item/New Weapon")]
 #endif
 [Serializable]
 public class RangedWeapon : Item
@@ -39,7 +38,7 @@ public class RangedWeapon : Item
             //green box for item
             GUILayout.BeginVertical("box");
             // bold text
-            GUILayout.Label("Weapon Item Stats", CustomEditorStyles.center_bold_label);
+            GUILayout.Label("Weapon Item Stats", CustomEditorStuff.center_bold_label);
             GUI.backgroundColor = Color.white;
 
             //damage

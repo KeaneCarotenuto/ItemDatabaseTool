@@ -1,22 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-#if UNITY_EDITOR
-using UnityEditor;
 using System.IO;
 using System.Reflection;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+#if UNITY_EDITOR
+using UnityEditor;
+
 public class DatabaseWindow : EditorWindow {
 
-    public static List<Item> database = new List<Item>();
-    static Item temp;
+    static string itemPath = "Assets/ItemDatabaseTool/Resources/Items/";
 
     static string searchText = "";
 
-    static Item selected;
+    public static Item selected;
     static public int selectedType;
 
     Vector2 listScroll = Vector2.zero;
@@ -30,11 +29,11 @@ public class DatabaseWindow : EditorWindow {
     }
 
     private void OnValidate() {
-        Refresh();
+        ItemDatabase.Refresh();
     }
 
     private void OnEnable() {
-        Refresh();
+        ItemDatabase.Refresh();
     }
 
     private void OnGUI()
@@ -42,17 +41,9 @@ public class DatabaseWindow : EditorWindow {
         //check selected
         if (!selected)
         {
-            selected = database.FirstOrDefault();
+            selected = ItemDatabase.database.FirstOrDefault();
         }
-        //check database
-        for (int i = 0; i < database.Count; i++)
-        {
-            if (!database[i])
-            {
-                database.RemoveAt(i);
-                i--;
-            }
-        }
+        
 
         GUILayout.BeginHorizontal();
         DrawList();
@@ -64,7 +55,7 @@ public class DatabaseWindow : EditorWindow {
         //save on change
         if (GUI.changed)
         {
-            Refresh();
+            ItemDatabase.Refresh();
             EditorUtility.SetDirty(this);
         }
 
@@ -82,19 +73,19 @@ public class DatabaseWindow : EditorWindow {
         listScroll = GUILayout.BeginScrollView(listScroll, false, true, GUILayout.Width(position.width / 2.5f), GUILayout.Height(position.height));
         
         GUILayout.BeginHorizontal();
-        GUILayout.Label("Items", CustomEditorStyles.center_bold_label);
+        GUILayout.Label("Items", CustomEditorStuff.center_bold_label);
         //refresh button
         if (GUILayout.Button(new GUIContent("Refresh", "Refreshes the list"), GUILayout.MaxWidth(75)))
         {
-            Refresh();
+            ItemDatabase.Refresh();
         }
         GUILayout.EndHorizontal();
 
         //space
         GUILayout.Space(10);
 
+        // create new item
         GUILayout.BeginHorizontal();
-
         string[] names = Item.AllTypes.Select(t => t.Name).ToArray();
         names = names.Concat(new string[] { typeof(Item).Name }).ToArray();
 
@@ -106,7 +97,32 @@ public class DatabaseWindow : EditorWindow {
 
         selectedType = EditorGUILayout.Popup(selectedType,names);
         GUI.backgroundColor = Color.white;
+        GUILayout.EndHorizontal();
 
+        // choose path
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Path: " + EditorPrefs.GetString("ItemDatabaseTool_Path", itemPath));
+        if (GUILayout.Button(new GUIContent("Change", "Change the path to the items folder")))
+        {
+            string path = EditorUtility.OpenFolderPanel("Choose Items Folder", "", "");
+
+            // check if path is valid
+            if (path.Length != 0)
+            {
+                // path must be in this project
+                if (path.Contains(Application.dataPath))
+                {
+                    itemPath = path.Replace(Application.dataPath, "Assets");
+
+                    // save
+                    EditorPrefs.SetString("ItemDatabaseTool_ItemPath", itemPath);
+                }
+                else
+                {
+                    Debug.LogError("Path must be within assets folder");
+                }
+            }
+        }
         GUILayout.EndHorizontal();
 
         //search bar
@@ -119,10 +135,10 @@ public class DatabaseWindow : EditorWindow {
         }
         GUILayout.EndHorizontal();
 
-        for (int i = 0; i < database.Count; i++)
+        for (int i = 0; i < ItemDatabase.database.Count; i++)
         {
             //if id or display name doesnt match search text, skip
-            if (!database[i].id.ToLower().Contains(searchText.ToLower()) && !database[i].m_displayName.ToLower().Contains(searchText.ToLower()))
+            if (!ItemDatabase.database[i].id.ToLower().Contains(searchText.ToLower()) && !ItemDatabase.database[i].m_displayName.ToLower().Contains(searchText.ToLower()))
             {
                 continue;
             }
@@ -130,10 +146,10 @@ public class DatabaseWindow : EditorWindow {
             //horiz
             GUILayout.BeginHorizontal();
             //begind disabled group
-            EditorGUI.BeginDisabledGroup(database[i] == selected);
-            if (GUILayout.Button(database[i].id))
+            EditorGUI.BeginDisabledGroup(ItemDatabase.database[i] == selected);
+            if (GUILayout.Button(ItemDatabase.database[i].id))
             {
-                selected = database[i];
+                selected = ItemDatabase.database[i];
                 GUI.FocusControl(null);
             }
             EditorGUI.EndDisabledGroup();
@@ -144,15 +160,15 @@ public class DatabaseWindow : EditorWindow {
             {
                 GUI.backgroundColor = Color.white;
                 //popup to confirm
-                if (EditorUtility.DisplayDialog("Delete Item", "Are you sure you want to delete " + database[i].name + "?\nThis CANNOT be undone!", "DELETE", "KEEP"))
+                if (EditorUtility.DisplayDialog("Delete Item", "Are you sure you want to delete " + ItemDatabase.database[i].name + "?\nThis CANNOT be undone!", "DELETE", "KEEP"))
                 {
                      //delete from asset database
-                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(database[i]));
+                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(ItemDatabase.database[i]));
                     //remove from list
-                    database.RemoveAt(i);
+                    ItemDatabase.database.RemoveAt(i);
                     i--;
                     //refresh
-                    Refresh();
+                    ItemDatabase.Refresh();
                 }
             }
             GUI.backgroundColor = Color.white;
@@ -195,14 +211,18 @@ public class DatabaseWindow : EditorWindow {
     /// Creates a new scriptable object item in unity
     static public void CreateNewItem(string type)
     {
-        string assetType = type;
+        // if path doesnt exist, create it
+        if (!Directory.Exists(itemPath))
+        {
+            Directory.CreateDirectory(itemPath);
+        }
 
-        string  path = "Assets";
+        string assetType = type;
 
         //create the item
         ScriptableObject item = ScriptableObject.CreateInstance(assetType);
 
-        string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath(path + "/" + assetType + ".asset");
+        string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath(itemPath + "/" + assetType + ".asset");
 
         //save
         AssetDatabase.CreateAsset(item, assetPathAndName);
@@ -220,93 +240,7 @@ public class DatabaseWindow : EditorWindow {
             selected = newItem;
         }
 
-        Refresh();
-    }
-
-    static public void Refresh() {
-        ValidateIDs();
-
-        database.Clear();
-        var guids = AssetDatabase.FindAssets("t:Item");
-        for (int i = 0; i < guids.Length; i++) {
-            var path = AssetDatabase.GUIDToAssetPath(guids[i]);
-            var asset = AssetDatabase.LoadAssetAtPath<Item>(path);
-            database.Add(asset);
-        }
-
-        //sort by id (alphabetical with numbers at the end, :( why was this so hard to do? feels like it should be base feature)
-        database.Sort((x, y) => {
-            string xNumberPortion = Regex.Match(x.id, @"\d+").Value;
-            string yNumberPortion = Regex.Match(y.id, @"\d+").Value;
-
-            string xWordPortion = x.id;
-
-            if (xNumberPortion != "") xWordPortion = x.id.Replace(xNumberPortion, "");
-
-            string yWordPortion = y.id;
-
-            if (yNumberPortion != "") yWordPortion = y.id.Replace(yNumberPortion, "");
-
-            if (xWordPortion == yWordPortion)
-            {
-                if (xNumberPortion == "") xNumberPortion = "0";
-                if (yNumberPortion == "") yNumberPortion = "0";
-                return int.Parse(xNumberPortion).CompareTo(int.Parse(yNumberPortion));
-            } else {
-                return xWordPortion.CompareTo(yWordPortion);
-            }
-        });
-    }
-
-    static public void ValidateIDs() {
-        // put selected id at the top (Reason: so that when we check for issues, it will be the first to change, in an attempt to not modify other items )
-        if (selected != null)
-        {
-            var selectedIndex = database.IndexOf(selected);
-            if (selectedIndex > 0 && selectedIndex < database.Count)
-            {
-                var selectedItem = database[selectedIndex];
-                database.RemoveAt(selectedIndex);
-                database.Insert(0, selectedItem);
-            }
-        }
-
-        //correct ID values
-        for (int i = 0; i < database.Count; i++) {
-            database[i].ValidateID();
-        }
-
-        //correct duplicate IDs
-        for (int i = 0; i < database.Count; i++) {
-            for (int j = 0; j < database.Count; j++) {
-                if (database[i].id == database[j].id && i != j) {
-                    //check if last char is a number
-                    if (char.IsNumber(database[i].id[database[i].id.Length - 1])) {
-                        //go backwards and count numbers
-                        int count = 0;
-                        for (int k = database[i].id.Length - 1; k >= 0; k--) {
-                            if (char.IsNumber(database[i].id[k])) {
-                                count++;
-                            } else {
-                                break;
-                            }
-                        }
-                        //add one to the number
-                        int number = int.Parse(database[i].id.Substring(database[i].id.Length - count, count)) + 1;
-                        //remove last numbers
-                        database[i].id = database[i].id.Substring(0, database[i].id.Length - count);
-                        //add new number
-                        database[i].id += number;
-
-                        ValidateIDs();
-                    }
-                    else {
-                        //add _1 to the number
-                        database[i].id = database[i].id + "_1";
-                    }
-                }
-            }
-        }
+        ItemDatabase.Refresh();
     }
 }
 

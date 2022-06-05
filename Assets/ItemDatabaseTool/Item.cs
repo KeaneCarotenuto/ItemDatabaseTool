@@ -17,6 +17,10 @@ public class Item : ScriptableObject
 {
     public static readonly IEnumerable<System.Type> AllTypes;
 
+    public static string GetSavePath(){
+        return Application.persistentDataPath + "/items/";
+    }
+
     static Item()
     {
         System.Type type = typeof(Item);
@@ -92,12 +96,18 @@ public class Item : ScriptableObject
     }
 
     /// <summary>
-    /// Saves item to file
+    /// Saves item to file ".../items/fileName.json"
     /// </summary>
-    /// <param name="_path">path to save to</param>
-    public static void Save(string _path, Item _item)
+    /// <param name="_fileName">path to save to</param>
+    public static void Save(string _fileName, Item _item)
     {
-        FileStream file = File.Create(_path);
+        // if save path doesn't exist, create it
+        if (!Directory.Exists(GetSavePath()))
+        {
+            Directory.CreateDirectory(GetSavePath());
+        }
+
+        FileStream file = File.Create(GetSavePath() + _fileName + ".json");
 
         //serialize item
         string json = JsonUtility.ToJson(_item);
@@ -117,14 +127,14 @@ public class Item : ScriptableObject
     }
 
     /// <summary>
-    /// Loads item from file, can return any item type
+    /// Loads item from file, ".../items/fileName.json"
     /// </summary>
-    /// <param name="path">path to load from</param>
+    /// <param name="_fileName">path to load from</param>
     /// <returns>Item loaded from file</returns>
-    public static Item Load(string path)
+    public static Item Load(string _fileName)
     {
         //read file
-        FileStream file = File.Open(path, FileMode.Open);
+        FileStream file = File.Open(GetSavePath() + _fileName + ".json", FileMode.Open);
         StreamReader reader = new StreamReader(file);
         string itemType = reader.ReadLine();
         string json = reader.ReadToEnd();
@@ -174,7 +184,7 @@ public class Item : ScriptableObject
             //green box for item
             GUILayout.BeginVertical("box");
             // bold text
-            GUILayout.Label("Base Item Stats", CustomEditorStyles.center_bold_label);
+            GUILayout.Label("Base Item Stats", CustomEditorStuff.center_bold_label);
             GUI.backgroundColor = Color.white;
 
             // horiz
