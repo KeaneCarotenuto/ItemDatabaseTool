@@ -75,9 +75,9 @@ public class Item : ScriptableObject
     /// Make variant of this item.
     /// </summary>
     /// <returns>The variant.</returns>
-    public Item CreateVariant()
+    public virtual Item CreateVariant(string _type)
     {
-        Item item = ScriptableObject.CreateInstance<Item>();
+        Item item = (Item)Item.CreateInstance(_type);
         item.variantID = Guid.NewGuid().ToString();
         item.m_id = this.id + "_" + item.variantID;
         item.m_displayName = this.m_displayName;
@@ -90,16 +90,22 @@ public class Item : ScriptableObject
     /// <summary>
     /// Saves item to file
     /// </summary>
-    /// <param name="path">path to save to</param>
-    public static void Save(string path, Item item)
+    /// <param name="_path">path to save to</param>
+    public static void Save(string _path, Item _item)
     {
-        FileStream file = File.Create(path);
+        FileStream file = File.Create(_path);
 
         //serialize item
-        string json = JsonUtility.ToJson(item);
+        string json = JsonUtility.ToJson(_item);
+        string itemType = _item.GetType().Name;
 
-        //write to file
+        //make writer
         StreamWriter writer = new StreamWriter(file);
+        // write the item type
+        writer.Write(itemType);
+        // new line
+        writer.Write("\n");
+        // write to file
         writer.Write(json);
         writer.Close();
 
@@ -107,17 +113,28 @@ public class Item : ScriptableObject
     }
 
     /// <summary>
-    /// Loads item from file
+    /// Loads item from file, can return any item type
     /// </summary>
     /// <param name="path">path to load from</param>
+    /// <returns>Item loaded from file</returns>
     public static Item Load(string path)
     {
-        //deserialize item
-        string json = System.IO.File.ReadAllText(path);
-        Item item = ScriptableObject.CreateInstance<Item>();
+        //read file
+        FileStream file = File.Open(path, FileMode.Open);
+        StreamReader reader = new StreamReader(file);
+        string itemType = reader.ReadLine();
+        string json = reader.ReadToEnd();
+        reader.Close();
+        file.Close();
+
+        //deserialize item as type
+        ScriptableObject item = ScriptableObject.CreateInstance(itemType);
+
+        // cast to item type
         JsonUtility.FromJsonOverwrite(json, item);
 
-        return item;
+        // cast to item type
+        return item as Item;
     }
 
 

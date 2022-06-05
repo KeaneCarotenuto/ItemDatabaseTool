@@ -50,6 +50,7 @@ public class TestScript : MonoBehaviour
 
     public void InstantiateItem()
     {
-        item = itemToSpawn.CreateVariant();
+        string itemType = itemToSpawn.GetType().Name;
+        item = itemToSpawn.CreateVariant(itemType);
     }
 }
