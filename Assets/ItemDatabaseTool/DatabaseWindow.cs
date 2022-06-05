@@ -125,6 +125,9 @@ public class DatabaseWindow : EditorWindow {
         }
         GUILayout.EndHorizontal();
 
+        //space
+        GUILayout.Space(10);
+
         //search bar
         GUILayout.BeginHorizontal();
         GUILayout.Label("Search: ", GUILayout.MaxWidth(50));
