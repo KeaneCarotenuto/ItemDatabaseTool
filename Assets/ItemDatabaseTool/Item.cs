@@ -15,10 +15,10 @@ using UnityEditor;
 [Serializable]
 public class Item : ScriptableObject
 {
-    public static readonly IEnumerable<System.Type> AllTypes;
+    [NonSerialized] public static readonly IEnumerable<System.Type> AllTypes;
 
-    public static string GetSavePath(){
-        return Application.persistentDataPath + "/items/";
+    public static string GetVariantSavePath(){
+        return Application.dataPath + "/ItemDatabase/variants/";
     }
 
     static Item()
@@ -96,18 +96,18 @@ public class Item : ScriptableObject
     }
 
     /// <summary>
-    /// Saves item to file ".../items/fileName.json"
+    /// Saves item to file
     /// </summary>
     /// <param name="_fileName">path to save to</param>
-    public static void Save(string _fileName, Item _item)
+    public static void Save(string _path, string _fileName, Item _item)
     {
         // if save path doesn't exist, create it
-        if (!Directory.Exists(GetSavePath()))
+        if (!Directory.Exists(_path))
         {
-            Directory.CreateDirectory(GetSavePath());
+            Directory.CreateDirectory(_path);
         }
 
-        FileStream file = File.Create(GetSavePath() + _fileName + ".json");
+        FileStream file = File.Create(_path + _fileName);
 
         //serialize item
         string json = JsonUtility.ToJson(_item);
@@ -127,19 +127,21 @@ public class Item : ScriptableObject
     }
 
     /// <summary>
-    /// Loads item from file, ".../items/fileName.json"
+    /// Loads item from file
     /// </summary>
     /// <param name="_fileName">path to load from</param>
     /// <returns>Item loaded from file</returns>
-    public static Item Load(string _fileName)
+    public static Item Load(string _path, string _fileName)
     {
         //read file
-        FileStream file = File.Open(GetSavePath() + _fileName + ".json", FileMode.Open);
+        FileStream file = File.Open(_path + _fileName, FileMode.Open);
         StreamReader reader = new StreamReader(file);
         string itemType = reader.ReadLine();
         string json = reader.ReadToEnd();
         reader.Close();
         file.Close();
+
+        Debug.Log("Loading " + itemType);
 
         //deserialize item as type
         ScriptableObject item = ScriptableObject.CreateInstance(itemType);

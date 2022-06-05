@@ -16,6 +16,45 @@ public class ItemDatabase
 {
     [SerializeField] public static List<Item> database = new List<Item>();
 
+    public static string GetSavePath(){
+        return Application.dataPath + "/ItemDatabase/database/";
+    }
+
+    static public void SaveListToFile()
+    {
+        string path = GetSavePath();
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        foreach (Item item in database)
+        {
+            string fileName = item.id + ".json";
+            Item.Save(GetSavePath(), fileName, item);
+        }
+    }
+
+    static public void LoadListFromFile()
+    {
+        string path = GetSavePath();
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        database.Clear();
+        foreach (string filePath in Directory.GetFiles(path))
+        {
+            string fileName = Path.GetFileName(filePath);
+            // if file does not ends in .json, continue
+            if (!fileName.EndsWith(".json")) continue;
+            
+            Item item = Item.Load(GetSavePath(), fileName);
+            database.Add(item);
+        }
+    }
+
     static public void Refresh() {
         //check database
         for (int i = 0; i < database.Count; i++)
@@ -64,6 +103,7 @@ public class ItemDatabase
     }
 
     static public void ValidateIDs() {
+        #if UNITY_EDITOR
         // put selected id at the top (Reason: so that when we check for issues, it will be the first to change, in an attempt to not modify other items )
         if (DatabaseWindow.selected != null)
         {
@@ -75,6 +115,7 @@ public class ItemDatabase
                 database.Insert(0, selectedItem);
             }
         }
+        #endif
 
         //correct ID values
         for (int i = 0; i < database.Count; i++) {

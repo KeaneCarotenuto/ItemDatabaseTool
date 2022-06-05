@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+using TMPro;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -43,7 +44,7 @@ public class TestScript : MonoBehaviour
 
     public string GetSavePath()
     {
-        return Application.persistentDataPath + "/" + this.GetType().Name + guid.ToString() + "/";
+        return Application.dataPath + "/ItemDatabase/" + this.GetType().Name + guid.ToString() + "/";
     }
 
     public string GetSaveFilePath()
@@ -72,10 +73,25 @@ public class TestScript : MonoBehaviour
             item = itemToGive;
         }
 
-        // if D is pressed, log ItemDatabase.database.Count
-        if (Input.GetKeyDown(KeyCode.D))
+        // if c is pressed, log ItemDatabase.database.Count
+        if (Input.GetKeyDown(KeyCode.C))
         {
             Debug.Log(ItemDatabase.database.Count);
+            // find TextMeshProGUI and set it to the count
+            TextMeshProUGUI text = FindObjectOfType<TextMeshProUGUI>();
+            text.text += "\n" + ItemDatabase.database.Count.ToString();
+        }
+
+        // if d is pressed, save the ItemDatabase to file
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            ItemDatabase.SaveListToFile();
+        }
+
+        // if f is pressed, load the ItemDatabase from file
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            ItemDatabase.LoadListFromFile();
         }
     }
 
@@ -83,7 +99,7 @@ public class TestScript : MonoBehaviour
     {
         string fileName = System.IO.File.ReadAllText(GetSaveFilePath());
 
-        item = Item.Load(fileName);
+        item = Item.Load(Item.GetVariantSavePath(), fileName);
     }
 
     private void SaveInventory()
@@ -94,8 +110,8 @@ public class TestScript : MonoBehaviour
             return;
         }
 
-        string fileName = item.id + item.variantID;
-        Item.Save(fileName, item);
+        string fileName = item.id + item.variantID + ".json";
+        Item.Save(Item.GetVariantSavePath(), fileName, item);
 
         // if save path doesn't exist, create it
         if (!Directory.Exists(GetSavePath()))

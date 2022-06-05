@@ -10,12 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f90fa149c377104f9cf9c91644b4e5e, type: 3}
-  m_Name: rangedweapon_0
+  m_Name: shotgun
   m_EditorClassIdentifier: 
-  m_id: rangedweapon_1
+  m_id: shotgun
   m_variantID: 
-  m_displayName: New Item EE
-  m_description: New Item Description
+  m_displayName: Shotgun
+  m_description: weeee
   m_icon: {fileID: 0}
-  m_tags: []
-  m_damage: 0
+  m_tags:
+  - m_name: newtag
+    m_payload: 
+  m_damage: 20
