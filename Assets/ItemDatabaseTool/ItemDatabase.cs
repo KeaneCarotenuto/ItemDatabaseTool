@@ -17,6 +17,152 @@ public class ItemDatabase
 {
     [SerializeField] public static List<Item> database = new List<Item>();
 
+    /// <summary>
+    /// get list of items in the database by id
+    /// </summary>
+    public static List<Item> GetItemsById(string _id)
+    {
+        return database.Where(x => x.id.ToLower().Contains(_id.ToLower())).ToList();
+    }
+
+    /// <summary>
+    /// get list of items in the database by name
+    /// </summary>
+    public static List<Item> GetItemsByName(string _name)
+    {
+        return database.Where(x => x.m_displayName.ToLower().Contains(_name.ToLower())).ToList();
+    }
+
+    /// <summary>
+    /// get list of items in the database by description
+    /// </summary>
+    public static List<Item> GetItemsByDescription(string _description)
+    {
+        return database.Where(x => x.m_description.ToLower().Contains(_description.ToLower())).ToList();
+    }
+
+    /// <summary>
+    /// get list of items in the database by type (System.Type)
+    /// </summary>
+    public static List<Item> GetItemsByType(System.Type _type)
+    {
+        return database.Where(x => x.GetType() == _type).ToList();
+    }
+
+    /// <summary>
+    /// get list of items in the database by type (string) <br/>
+    /// NOTE: Case sensitive!
+    /// </summary>
+    public static List<Item> GetItemsByType(string _type)
+    {
+        return database.Where(x => x.GetType().Name == _type).ToList();
+    }
+
+    /// <summary>
+    /// get list of items in the database using optional search parameters using OR logic
+    /// </summary>
+    public static List<Item> GetItemsByORFilter(string _id = "", string _name = "", string _description = "", string _type_s = "", System.Type _type_t = null)
+    {
+        List<Item> items = new List<Item>();
+
+        bool anyFilter = false;
+        if (_id != "")
+        {
+            anyFilter = true;
+
+            items = items.Union(GetItemsById(_id)).ToList();
+        }
+
+        if (_name != "")
+        {
+            anyFilter = true;
+
+            items = items.Union(GetItemsByName(_name)).ToList();
+        }
+
+        if (_description != "")
+        {
+            anyFilter = true;
+
+            items = items.Union(GetItemsByDescription(_description)).ToList();
+        }
+
+        if (_type_s != "")
+        {
+            anyFilter = true;
+
+            items = items.Union(GetItemsByType(_type_s)).ToList();
+        }
+
+        if (_type_t != null)
+        {
+            anyFilter = true;
+
+            items = items.Union(GetItemsByType(_type_t)).ToList();
+        }
+
+        // if no filters were used, return all items
+        if (!anyFilter)
+        {
+            return database;
+        }
+
+        return items;
+    }
+
+    /// <summary>
+    /// get list of items in the database using optional search parameters using AND logic
+    /// </summary>
+    public static List<Item> GetItemsByANDFilter(string _id = "", string _name = "", string _description = "" , string _type_s = "", System.Type _type_t = null)
+    {
+        List<Item> items = new List<Item>();
+
+        bool anyFilter = false;
+        if (_id != "")
+        {
+            anyFilter = true;
+
+            items = items.Intersect(GetItemsById(_id)).ToList();
+        }
+
+        if (_name != "")
+        {
+            anyFilter = true;
+
+            items = items.Intersect(GetItemsByName(_name)).ToList();
+        }
+
+        if (_description != "")
+        {
+            anyFilter = true;
+
+            items = items.Intersect(GetItemsByDescription(_description)).ToList();
+        }
+
+        if (_type_s != "")
+        {
+            anyFilter = true;
+
+            items = items.Intersect(GetItemsByType(_type_s)).ToList();
+        }
+
+        if (_type_t != null)
+        {
+            anyFilter = true;
+
+            items = items.Intersect(GetItemsByType(_type_t)).ToList();
+        }
+
+        // if no filters were used, return all items (redundant for this function, but included for consistency ¯\_(ツ)_/¯ )
+        if (!anyFilter)
+        {
+            return database;
+        }
+
+        return items;
+    }
+
+
     public static string GetDatabaseFoldersPath()
     {
         return "/ItemDatabase/database/";

@@ -149,51 +149,142 @@ public class DatabaseWindow : EditorWindow {
             searchText = "";
         }
         GUILayout.EndHorizontal();
+        // space
+        GUILayout.Space(10);
 
-        for (int i = 0; i < ItemDatabase.database.Count; i++)
+        // new list of items
+        List<Item> items = ItemDatabase.database;
+
+        List<Item> displayedItems = new List<Item>();
+
+        // if search text is not empty, show ID/Name matches
+        if (searchText.Length > 0)
         {
-            //if id or display name doesnt match search text, skip
-            if (!ItemDatabase.database[i].id.ToLower().Contains(searchText.ToLower()) && !ItemDatabase.database[i].m_displayName.ToLower().Contains(searchText.ToLower()))
-            {
-                continue;
-            }
+            items = ItemDatabase.GetItemsByORFilter(_id: searchText, _name: searchText);
+            items = items.Except(displayedItems).ToList();
+            // add to displayed items
+            displayedItems = displayedItems.Union(items).ToList();
 
-            //horiz
-            GUILayout.BeginHorizontal();
-            //begind disabled group
-            EditorGUI.BeginDisabledGroup(ItemDatabase.database[i] == selected);
-            if (GUILayout.Button(ItemDatabase.database[i].id))
-            {
-                selected = ItemDatabase.database[i];
-                GUI.FocusControl(null);
-            }
-            EditorGUI.EndDisabledGroup();
-            
-            GUI.backgroundColor = Color.red;
-            //delete button
-            if (GUILayout.Button("X", GUILayout.Width(20)))
-            {
-                GUI.backgroundColor = Color.white;
-                //popup to confirm
-                if (EditorUtility.DisplayDialog("Delete Item", "Are you sure you want to delete " + ItemDatabase.database[i].name + "?\nThis CANNOT be undone!", "DELETE", "KEEP"))
+            if (items.Count > 0) {
+                // space
+                GUILayout.Space(10);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Matching ID/Name: " + items.Count, CustomEditorStuff.center_bold_label);
+                GUILayout.EndHorizontal();
+
+                foreach (Item _item in items)
                 {
-                     //delete from asset database
-                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(ItemDatabase.database[i]));
-                    //remove from list
-                    ItemDatabase.database.RemoveAt(i);
-                    i--;
-                    //refresh
-                    ItemDatabase.Refresh();
+                    int listSize = items.Count;
+
+                    DrawItemButton(_item);
+
+                    // if deleting or adding
+                    if (listSize != items.Count)
+                    {
+                        break;
+                    }
                 }
             }
-            GUI.backgroundColor = Color.white;
-            GUILayout.EndHorizontal();
+        }
+
+        // if search text is not empty, show Description matches
+        if (searchText.Length > 0)
+        {
+            items = ItemDatabase.GetItemsByORFilter(_description: searchText);
+            items = items.Except(displayedItems).ToList();
+            // add to displayed items
+            displayedItems = displayedItems.Union(items).ToList();
+
+            if (items.Count > 0) {
+                // space
+                GUILayout.Space(10);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Matching Description: " + items.Count, CustomEditorStuff.center_bold_label);
+                GUILayout.EndHorizontal();
+
+                foreach (Item _item in items)
+                {
+                    int listSize = items.Count;
+
+                    DrawItemButton(_item);
+
+                    // if deleting or adding
+                    if (listSize != items.Count)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        items = ItemDatabase.database.Except(displayedItems).ToList();
+
+        // if search text is not empty, show rest
+        if (searchText.Length > 0)
+        {
+            if (items.Count > 0) {
+                // space
+                GUILayout.Space(10);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("No Match: " + items.Count, CustomEditorStuff.center_bold_label);
+                GUILayout.EndHorizontal();
+            }
+        }
+
+        foreach (Item _item in items)
+        {
+            int listSize = items.Count;
+
+            DrawItemButton(_item);
+
+            // if deleting or adding
+            if (listSize != items.Count)
+            {
+                break;
+            }
         }
 
         //space
         GUILayout.Space(10);
 
         GUILayout.EndScrollView();
+    }
+
+    private static void DrawItemButton(Item _item)
+    {
+        //horiz
+        GUILayout.BeginHorizontal();
+        //begind disabled group
+        EditorGUI.BeginDisabledGroup(_item == selected);
+        if (GUILayout.Button(_item.id))
+        {
+            selected = _item;
+            GUI.FocusControl(null);
+        }
+        EditorGUI.EndDisabledGroup();
+
+        GUI.backgroundColor = Color.red;
+        //delete button
+        if (GUILayout.Button("X", GUILayout.Width(20)))
+        {
+            GUI.backgroundColor = Color.white;
+            //popup to confirm
+            if (EditorUtility.DisplayDialog("Delete Item", "Are you sure you want to delete " + _item.name + "?\nThis CANNOT be undone!", "DELETE", "KEEP"))
+            {
+                //delete from asset database
+                AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(_item));
+                //remove from list
+                ItemDatabase.database.Remove(_item);
+                //refresh
+                ItemDatabase.Refresh();
+                // break;
+            }
+        }
+        GUI.backgroundColor = Color.white;
+        GUILayout.EndHorizontal();
     }
 
     private void DrawItemInspector()

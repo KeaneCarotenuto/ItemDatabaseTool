@@ -193,7 +193,7 @@ public class Item : ScriptableObject
             GUILayout.BeginHorizontal();
             item.id = EditorGUILayout.TextField("ID: ", item.id);
             // update file name button
-            if (GUILayout.Button("Update File Name"))
+            if (GUILayout.Button(new GUIContent("Update File Name", "Updates the file name to match the item id"), GUILayout.Width(120)))
             {
                 item.ValidateID();
 
@@ -223,10 +223,12 @@ public class Item : ScriptableObject
                     GUILayout.BeginHorizontal();
                     item.m_tags[i].name = EditorGUILayout.TextField("Tag Name: ", item.m_tags[i].name);
                     item.m_tags[i].payload = EditorGUILayout.TextField("Payload: ", item.m_tags[i].payload);
+                    GUI.backgroundColor = Color.red;
                     if (GUILayout.Button("X", GUILayout.Width(20)))
                     {
                         item.m_tags.RemoveAt(i);
                     }
+                    GUI.backgroundColor = Color.white;
                     GUILayout.EndHorizontal();
                 }
                 if (GUILayout.Button("Add Tag"))

@@ -1,0 +1,17 @@
+RangedWeapon
+{
+    "m_id": "bow",
+    "m_variantID": "",
+    "m_displayName": "Bow",
+    "m_description": "Classic wooden bow.",
+    "m_icon": {
+        "instanceID": 0
+    },
+    "m_tags": [
+        {
+            "m_name": "drawn",
+            "m_payload": "false"
+        }
+    ],
+    "m_damage": 0.0
+}

@@ -1,0 +1,11 @@
+Item
+{
+    "m_id": "hotdog",
+    "m_variantID": "",
+    "m_displayName": "Hotdog",
+    "m_description": "Surely you know what a hotdog is?",
+    "m_icon": {
+        "instanceID": 0
+    },
+    "m_tags": []
+}
