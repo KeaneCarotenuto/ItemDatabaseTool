@@ -110,7 +110,7 @@ public class Item : ScriptableObject
         FileStream file = File.Create(_path + _fileName);
 
         //serialize item
-        string json = JsonUtility.ToJson(_item);
+        string json = JsonUtility.ToJson(_item, true);
         string itemType = _item.GetType().Name;
 
         //make writer
@@ -155,7 +155,7 @@ public class Item : ScriptableObject
 
 
     #if UNITY_EDITOR
-    //inspector gui stuff
+    //Custom editor for item
     [CustomEditor(typeof(Item))]
     public class ItemEditor : Editor
     {

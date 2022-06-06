@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.Callbacks;
 #endif
 
 [Serializable]
@@ -16,10 +17,68 @@ public class ItemDatabase
 {
     [SerializeField] public static List<Item> database = new List<Item>();
 
-    public static string GetSavePath(){
-        return Application.dataPath + "/ItemDatabase/database/";
+    public static string GetDatabaseFoldersPath()
+    {
+        return "/ItemDatabase/database/";
     }
 
+    public static string GetSavePath(){
+        return Application.dataPath + GetDatabaseFoldersPath();
+    }
+
+    [RuntimeInitializeOnLoadMethod]
+    public static void Initialize()
+    {
+        if (database.Count == 0)
+        {
+            LoadListFromFile();
+        }
+    }
+
+    #if UNITY_EDITOR
+    /// <summary>
+    /// On Build, refresh database, saves to file, Copies files from editor folder to build folder <br/>
+    /// NOTE: works on windows/linux/mac build (I THINK!)
+    /// </summary>
+    [PostProcessBuildAttribute(1)]
+    public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject) {
+        Debug.Log( "Made build at: " + pathToBuiltProject );
+
+        // refresh db
+        Refresh();
+        // save db to file
+        SaveListToFile();
+
+        // make databse folder in build folder
+        string buildFolder = pathToBuiltProject.Substring(0, pathToBuiltProject.LastIndexOf("/")) ;
+        string productName = Application.productName;
+        string buildDatabasePath = buildFolder + "/" + productName + "_Data" + GetDatabaseFoldersPath();
+        Debug.Log("Creating database at: " + buildDatabasePath);
+        if (!Directory.Exists(buildDatabasePath))
+        {
+            Directory.CreateDirectory(buildDatabasePath);
+            Debug.Log("Created database folder");
+        }
+
+        // get all files in the ItemDatabase folder
+        string[] files = Directory.GetFiles(GetSavePath(), "*.json");
+        foreach (string file in files)
+        {
+            // get the file name
+            string fileName = Path.GetFileName(file);
+            // copy the file to the build folder
+            File.Copy(GetSavePath() + fileName, buildDatabasePath + fileName, true);
+
+            Debug.Log("Copied file: " + fileName);
+        }
+
+        Debug.Log("Finished creating database");
+    }
+    #endif
+
+    /// <summary>
+    /// Saves the database to file from memory.
+    /// </summary>
     static public void SaveListToFile()
     {
         string path = GetSavePath();
@@ -35,6 +94,9 @@ public class ItemDatabase
         }
     }
 
+    /// <summary>
+    /// Loads the database from file into memory
+    /// </summary>
     static public void LoadListFromFile()
     {
         string path = GetSavePath();
@@ -53,6 +115,59 @@ public class ItemDatabase
             Item item = Item.Load(GetSavePath(), fileName);
             database.Add(item);
         }
+    }
+
+    /// <summary>
+    /// Deletes all .json files in the database folder
+    /// </summary>
+    static public void DeleteListFromFile()
+    {
+        string path = GetSavePath();
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        foreach (string filePath in Directory.GetFiles(path))
+        {
+            string fileName = Path.GetFileName(filePath);
+            // if file does not ends in .json, continue
+            if (!fileName.EndsWith(".json")) continue;
+
+            File.Delete(filePath);
+        }
+    }
+
+    /// <summary>
+    /// Deletes meta data files in the database folder
+    /// </summary>
+    static public void DeleteListMetaDataFromFile()
+    {
+        string path = GetSavePath();
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        foreach (string filePath in Directory.GetFiles(path))
+        {
+            string fileName = Path.GetFileName(filePath);
+            // if file does not ends in .meta, continue
+            if (!fileName.EndsWith(".meta")) continue;
+
+            File.Delete(filePath);
+        }
+    }
+
+    /// <summary>
+    /// Resets the database folder
+    /// </summary>
+    static public void ResetDatabaseFolder()
+    {
+        DeleteListFromFile();
+        DeleteListMetaDataFromFile();
+        
+        SaveListToFile();
     }
 
     static public void Refresh() {

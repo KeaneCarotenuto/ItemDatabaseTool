@@ -21,11 +21,18 @@ public class DatabaseWindow : EditorWindow {
     Vector2 listScroll = Vector2.zero;
     Vector2 itemScroll = Vector2.zero;
 
-    [MenuItem("ItemDatabaseTool/DatabaseWindow")]
+    // Open window button
+    [MenuItem("ItemDatabaseTool/Database Window")]
     private static void ShowWindow() {
         EditorWindow window = GetWindow<DatabaseWindow>();
-        window.titleContent = new GUIContent("DatabaseWindow");
+        window.titleContent = new GUIContent("Database Window");
         window.Show();
+    }
+
+    // Remake the database .json files
+    [MenuItem("ItemDatabaseTool/Re-make Database folder")]
+    private static void ResetDatabaseFolder() {
+        ItemDatabase.ResetDatabaseFolder();
     }
 
     private void OnValidate() {
@@ -74,8 +81,13 @@ public class DatabaseWindow : EditorWindow {
         
         GUILayout.BeginHorizontal();
         GUILayout.Label("Items", CustomEditorStuff.center_bold_label);
+        // save to file button
+        if (GUILayout.Button(new GUIContent("Re-make Files", "DELETES ALL .json and .meta files in the ItemDatabase folder.\n\nThen re-makes the current database into .json files"), GUILayout.Width(100)))
+        {
+            ItemDatabase.ResetDatabaseFolder();
+        }
         //refresh button
-        if (GUILayout.Button(new GUIContent("Refresh", "Refreshes the list"), GUILayout.MaxWidth(75)))
+        if (GUILayout.Button(new GUIContent("Refresh", "Refreshes the list below"), GUILayout.MaxWidth(75)))
         {
             ItemDatabase.Refresh();
         }

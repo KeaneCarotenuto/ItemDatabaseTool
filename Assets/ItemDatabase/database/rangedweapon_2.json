@@ -1,2 +1,12 @@
 RangedWeapon
-{"m_id":"rangedweapon_2","m_variantID":"","m_displayName":"New Item EE","m_description":"New Item Description","m_icon":{"instanceID":0},"m_tags":[],"m_damage":0.0}
+{
+    "m_id": "rangedweapon_2",
+    "m_variantID": "",
+    "m_displayName": "New Item EE",
+    "m_description": "New Item Description",
+    "m_icon": {
+        "instanceID": 0
+    },
+    "m_tags": [],
+    "m_damage": 0.0
+}
