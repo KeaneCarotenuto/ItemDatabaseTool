@@ -153,17 +153,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: 30223ddd-2492-4aba-a071-b8e929c14deb
-  testList:
-  - a: 0
-    b: 0
   itemToGive: {fileID: 11400000, guid: 4bf4f878aa2fdfe4f94c2f3ac53a8e76, type: 2}
   m_item: {fileID: 0}
   sloot:
     guid: 
-    typeFilter:
-    - MeleeWeapon
-    - RangedWeapon
-    m_item: {fileID: 675425302}
+    typeFilter: []
+    m_item: {fileID: 0}
 --- !u!4 &142403246
 Transform:
   m_ObjectHideFlags: 0
@@ -380,24 +375,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 563951119}
   m_CullTransparentMesh: 1
---- !u!114 &675425302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70468ca514ed0324c960b68986f34e30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_id: hotdog
-  m_variantID: aa9c745b-d024-4b2d-9d67-e6cb9ff70a47
-  m_displayName: Hotdog
-  m_description: Surely you know what a hotdog is? its long and meat/bread
-  m_icon: {fileID: 0}
-  m_tags: []
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -627,6 +604,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 708861224}
   m_CullTransparentMesh: 1
+--- !u!1 &871424656
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 871424658}
+  - component: {fileID: 871424657}
+  m_Layer: 0
+  m_Name: DOnk
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &871424657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871424656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c3ee0ee3dd0e134aacdfcf3b757d677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 82c22ea8-1155-4f54-b718-559a60e4e825
+  itemToGive: {fileID: 0}
+  m_item: {fileID: 0}
+  sloot:
+    guid: 
+    typeFilter: []
+    m_item: {fileID: 0}
+--- !u!4 &871424658
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871424656}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 18.568928, y: 16.888811, z: 19.014896}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &896090866
 GameObject:
   m_ObjectHideFlags: 0

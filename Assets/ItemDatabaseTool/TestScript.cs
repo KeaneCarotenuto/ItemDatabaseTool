@@ -20,6 +20,9 @@ public class TestScript : MonoBehaviour
 
     #if UNITY_EDITOR
     private void OnValidate() {
+        if (guid == "") {
+            guid = System.Guid.NewGuid().ToString();
+        }
     }
     #endif
 
