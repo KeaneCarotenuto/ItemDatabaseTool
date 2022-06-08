@@ -20,3 +20,5 @@ MonoBehaviour:
   m_tags:
   - m_name: inflict_bleed
     m_payload: true
+  m_currentStackSize: 1
+  m_maxStackSize: 1

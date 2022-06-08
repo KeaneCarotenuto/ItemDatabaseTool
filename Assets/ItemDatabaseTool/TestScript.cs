@@ -12,49 +12,7 @@ using UnityEditor;
 [Serializable]
 public class TestScript : MonoBehaviour
 {
-    // guid of this script
-    #if UNITY_EDITOR 
-    [ReadOnly]
-    #endif 
-    [SerializeField] private string guid;
-
-    #if UNITY_EDITOR
-    private void OnValidate() {
-        if (guid == "") {
-            guid = System.Guid.NewGuid().ToString();
-        }
-    }
-    #endif
-
     public Item itemToGive;
-
-    #if UNITY_EDITOR 
-    [ReadOnly]
-    #endif 
-    [SerializeField] private Item m_item = null;
-    public Item item
-    {
-        get { return m_item; }
-        set
-        {
-            m_item = value;
-            if (item.variantID == "") {
-                item = item.CreateVariant();
-            }
-        }
-    }
-
-    [SerializeField] public InventorySlot sloot;
-
-    public string GetSavePath()
-    {
-        return Application.dataPath + "/ItemDatabase/" + this.GetType().Name + guid.ToString() + "/";
-    }
-
-    public string GetSaveFilePath()
-    {
-        return GetSavePath() + "/inventory.json";
-    }
 
     // Update is called once per frame
     void Update()
@@ -62,19 +20,21 @@ public class TestScript : MonoBehaviour
         // if S is pressed, save the item to file
         if (Input.GetKeyDown(KeyCode.S))
         {
-            SaveInventory();
+            //SaveInventory();
+            GetComponent<Inventory>().SaveInventory();
         }
 
         // if L is pressed, load the item from file
         if (Input.GetKeyDown(KeyCode.L))
         {
-            LoadInventory();
+            //LoadInventory();
+            GetComponent<Inventory>().LoadInventory();
         }
 
         // if G is pressed, give the item to the player
         if (Input.GetKeyDown(KeyCode.G))
         {
-            item = itemToGive;
+            GetComponent<Inventory>().AddItem(itemToGive.id);
         }
 
         // if c is pressed, log ItemDatabase.database.Count
@@ -97,39 +57,5 @@ public class TestScript : MonoBehaviour
         {
             ItemDatabase.LoadListFromFile();
         }
-    }
-
-    private void LoadInventory()
-    {
-        string fileName = System.IO.File.ReadAllText(GetSaveFilePath());
-
-        item = Item.Load(Item.GetVariantSavePath(), fileName);
-    }
-
-    private void SaveInventory()
-    {
-        if (item == null)
-        {
-            Debug.Log("Item is null.");
-            return;
-        }
-
-        string fileName = item.id + item.variantID + ".json";
-        Item.Save(Item.GetVariantSavePath(), fileName, item);
-
-        // if save path doesn't exist, create it
-        if (!Directory.Exists(GetSavePath()))
-        {
-            Directory.CreateDirectory(GetSavePath());
-        }
-
-        FileStream file = File.Create(GetSaveFilePath());
-        Debug.Log("Saved to " + fileName);
-
-        //write to file
-        StreamWriter writer = new StreamWriter(file);
-        writer.Write(fileName);
-        writer.Close();
-        file.Close();
     }
 }

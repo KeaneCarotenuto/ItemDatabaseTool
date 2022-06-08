@@ -20,4 +20,6 @@ MonoBehaviour:
   m_tags:
   - m_name: newtag
     m_payload: 
+  m_currentStackSize: 1
+  m_maxStackSize: 1
   m_length: 0

@@ -67,6 +67,62 @@ public class Item : ScriptableObject
 
     [SerializeField] public List<TagManager.Tag> m_tags = new List<TagManager.Tag>();
 
+    [SerializeField] private int m_currentStackSize = 1;
+    public int currentStackSize
+    {
+        get { return m_currentStackSize; }
+        set
+        {
+            m_currentStackSize = value;
+
+            if (m_currentStackSize < 1)
+            {
+                m_currentStackSize = 1;
+            }
+
+            if (m_currentStackSize > m_maxStackSize)
+            {
+                m_currentStackSize = m_maxStackSize;
+            }
+        }
+    }
+    [SerializeField] private int m_maxStackSize = 1;
+    public int maxStackSize
+    {
+        get { return m_maxStackSize; }
+        set
+        {
+            m_maxStackSize = value;
+
+            if (m_maxStackSize < 1)
+            {
+                m_maxStackSize = 1;
+            }
+
+            if (m_maxStackSize < m_currentStackSize)
+            {
+                m_currentStackSize = m_maxStackSize;
+            }
+        }
+    }
+
+    // TODO: need to make this merge with the other item's stats (stack size, check for values the same excluding variantID, perhaps bool to ignore variantID) also return what ever is not merged (new function?)
+    public bool TryAddToStack(Item _item){
+        if (this.GetType() != _item.GetType() || this.id != _item.id && this.variantID != _item.variantID){
+            Debug.LogWarning("Trying to add an item of a different type or id to a stack");
+            return false;
+        }
+
+        if (currentStackSize < maxStackSize){
+            currentStackSize++;
+            return true;
+        }
+        else {
+            Debug.LogWarning("Trying to add an item to a full stack");
+            return false;
+        }
+    }
+
     public void ValidateID(){
         //correct id
         //to lower
@@ -92,6 +148,12 @@ public class Item : ScriptableObject
         item.m_description = this.m_description;
         item.m_icon = this.m_icon;
         item.m_tags = this.m_tags;
+
+        if (item.name == "")
+        {
+            item.name = item.id;
+        }
+
         return item;
     }
 
@@ -133,6 +195,7 @@ public class Item : ScriptableObject
     /// <returns>Item loaded from file</returns>
     public static Item Load(string _path, string _fileName)
     {
+        Debug.Log("Trying to open" + _path + _fileName);
         //read file
         FileStream file = File.Open(_path + _fileName, FileMode.Open);
         StreamReader reader = new StreamReader(file);
@@ -148,6 +211,13 @@ public class Item : ScriptableObject
 
         // cast to item type
         JsonUtility.FromJsonOverwrite(json, item);
+
+        item = (Item)item;
+
+        if (item && ((Item)item).name == "")
+        {
+            ((Item)item).name = ((Item)item).id;
+        }
 
         // cast to item type
         return item as Item;
@@ -227,6 +297,7 @@ public class Item : ScriptableObject
                     if (GUILayout.Button("X", GUILayout.Width(20)))
                     {
                         item.m_tags.RemoveAt(i);
+                        break;
                     }
                     GUI.backgroundColor = Color.white;
                     GUILayout.EndHorizontal();

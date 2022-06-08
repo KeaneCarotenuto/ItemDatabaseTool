@@ -133,8 +133,9 @@ GameObject:
   m_Component:
   - component: {fileID: 142403246}
   - component: {fileID: 142403245}
+  - component: {fileID: 142403247}
   m_Layer: 0
-  m_Name: TestObject
+  m_Name: Inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,13 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c3ee0ee3dd0e134aacdfcf3b757d677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 30223ddd-2492-4aba-a071-b8e929c14deb
   itemToGive: {fileID: 11400000, guid: 4bf4f878aa2fdfe4f94c2f3ac53a8e76, type: 2}
-  m_item: {fileID: 0}
-  sloot:
-    guid: 
-    typeFilter: []
-    m_item: {fileID: 0}
 --- !u!4 &142403246
 Transform:
   m_ObjectHideFlags: 0
@@ -169,11 +164,29 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 977446166}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &142403247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142403244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c6a05885f7dc5d4597aac5481d8b05f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_id: main
+  m_slots:
+  - typeFilter:
+    - RangedWeapon
+    m_item: {fileID: 511728221}
+  - typeFilter: []
+    m_item: {fileID: 1022812526}
 --- !u!1 &336470751
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,6 +262,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 336470751}
   m_CullTransparentMesh: 1
+--- !u!114 &511728221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f90fa149c377104f9cf9c91644b4e5e, type: 3}
+  m_Name: bow
+  m_EditorClassIdentifier: 
+  m_id: bow
+  m_variantID: e477129f-5210-4e91-9760-00d21ce7e97d
+  m_displayName: Bow
+  m_description: Classic wooden bow.
+  m_icon: {fileID: 0}
+  m_tags:
+  - m_name: drawn
+    m_payload: false
+  m_currentStackSize: 1
+  m_maxStackSize: 1
+  m_damage: 0
 --- !u!1 &563951119
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,56 +640,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 708861224}
   m_CullTransparentMesh: 1
---- !u!1 &871424656
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 871424658}
-  - component: {fileID: 871424657}
-  m_Layer: 0
-  m_Name: DOnk
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &871424657
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 871424656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c3ee0ee3dd0e134aacdfcf3b757d677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guid: 82c22ea8-1155-4f54-b718-559a60e4e825
-  itemToGive: {fileID: 0}
-  m_item: {fileID: 0}
-  sloot:
-    guid: 
-    typeFilter: []
-    m_item: {fileID: 0}
---- !u!4 &871424658
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 871424656}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18.568928, y: 16.888811, z: 19.014896}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &896090866
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,7 +943,7 @@ GameObject:
   - component: {fileID: 977446168}
   - component: {fileID: 977446167}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Console
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -975,8 +961,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 896090867}
-  m_Father: {fileID: 142403246}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1044,6 +1030,31 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1022812526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f90fa149c377104f9cf9c91644b4e5e, type: 3}
+  m_Name: shotgun
+  m_EditorClassIdentifier: 
+  m_id: shotgun
+  m_variantID: 10e843be-b3d9-472f-9396-1454c290a67f
+  m_displayName: Shotgun
+  m_description: A 12-gauge double barrel shotgun. BANG! BANG!
+  m_icon: {fileID: 0}
+  m_tags:
+  - m_name: leftchamber
+    m_payload: true
+  - m_name: rightchamber
+    m_payload: false
+  m_currentStackSize: 1
+  m_maxStackSize: 1
+  m_damage: 20
 --- !u!1 &1314573542
 GameObject:
   m_ObjectHideFlags: 0

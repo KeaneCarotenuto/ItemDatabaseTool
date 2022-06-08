@@ -22,4 +22,6 @@ MonoBehaviour:
     m_payload: true
   - m_name: rightchamber
     m_payload: false
+  m_currentStackSize: 1
+  m_maxStackSize: 1
   m_damage: 20

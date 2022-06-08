@@ -18,6 +18,21 @@ public class ItemDatabase
     [SerializeField] public static List<Item> database = new List<Item>();
 
     /// <summary>
+    /// Gets an item by its id.
+    /// </summary>
+    /// <param name="id">The id of the item.</param>
+    /// <returns>The item with the given id.</returns>
+    public static Item GetItem(string id)
+    {
+        Item item = database.Find(x => x.id == id);
+        if (item == null)
+        {
+            Debug.LogError("Item with id " + id + " not found.");
+        }
+        return item;
+    }
+
+    /// <summary>
     /// get list of items in the database by id
     /// </summary>
     public static List<Item> GetItemsById(string _id)
@@ -323,7 +338,8 @@ public class ItemDatabase
             if (!database[i])
             {
                 database.RemoveAt(i);
-                i--;
+                Refresh();
+                return;
             }
         }
 
