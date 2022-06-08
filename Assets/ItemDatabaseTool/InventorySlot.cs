@@ -11,18 +11,18 @@ using UnityEditor;
 #endif
 
 [Serializable]
-public class InventorySlot : UnityEngine.Object
+public class InventorySlot
 {
     // guid of this script
     #if UNITY_EDITOR
     [ReadOnly]
     #endif
-    [SerializeField] private string guid;
+    [SerializeField] private string guid = "";
 
     // type filter
-    [SerializeField] public List<System.Type> typeFilter = new List<System.Type>();
+    [SerializeField] public List<string> typeFilter = new List<string>();
 
-    [SerializeField] public Item m_item;
+    [SerializeField] public Item m_item = null;
     [SerializeField] public Item item
     {
         get { return m_item; }
@@ -59,8 +59,8 @@ public class InventorySlot : UnityEngine.Object
             EditorGUI.indentLevel = 0;
 
             // Calculate rects
-            Rect itemRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight, 50, EditorGUIUtility.singleLineHeight);
-            Rect typeButtonRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight * 3.0f, 50, EditorGUIUtility.singleLineHeight);
+            Rect itemRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight, position.width, EditorGUIUtility.singleLineHeight);
+            Rect typeButtonRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight * 3.0f, position.width, EditorGUIUtility.singleLineHeight);
 
             // draw the item
             inventorySlot.item = (Item)EditorGUI.ObjectField(itemRect, inventorySlot.item, typeof(Item), false);
@@ -71,11 +71,8 @@ public class InventorySlot : UnityEngine.Object
             string[] names = Item.AllTypes.Select(t => t.Name).ToArray();
             names = names.Concat(new string[] { typeof(Item).Name }).ToArray();
 
-            // array of current types
-            string[] currentTypes = inventorySlot.typeFilter.Select(t => t.Name).ToArray();
-
             // display the GenericMenu when pressing a button
-            if (GUI.Button(new Rect(position.x, position.y + 20, position.width, position.height), "Types"))
+            if (GUI.Button(new Rect(position.x, position.y + 50, position.width, EditorGUIUtility.singleLineHeight), "Type Filter"))
             {
 
                 // draw the dropdown
@@ -83,7 +80,11 @@ public class InventorySlot : UnityEngine.Object
                 for (int i = 0; i < names.Length; i++)
                 {
                     string name = names[i];
-                    menu.AddItem(new GUIContent(name), currentTypes.Contains(name), () => { inventorySlot.typeFilter.Add(System.Type.GetType(name)); });
+                    menu.AddItem(new GUIContent(name), inventorySlot.typeFilter.Contains(name), () => { 
+                        inventorySlot.typeFilter.Add(name); 
+                        // save
+                        EditorUtility.SetDirty(property.serializedObject.targetObject);
+                        });
                 }
 
                 // draw the dropdown
@@ -98,7 +99,6 @@ public class InventorySlot : UnityEngine.Object
             EditorGUI.EndProperty();
 
             EditorUtility.SetDirty(property.serializedObject.targetObject);
-            
         }
 
         public override float GetPropertyHeight (SerializedProperty property, GUIContent label) {

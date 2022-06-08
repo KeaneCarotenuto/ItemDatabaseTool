@@ -20,9 +20,16 @@ public class TestScript : MonoBehaviour
 
     #if UNITY_EDITOR
     private void OnValidate() {
-        
     }
     #endif
+
+    [Serializable]
+    public class testClass{
+        public int a = 0;
+        public int b = 0;
+    }
+
+    [SerializeField] public List<testClass> testList = new List<testClass>();
 
     public Item itemToGive;
 
@@ -31,7 +38,7 @@ public class TestScript : MonoBehaviour
     #endif 
     [SerializeField] private Item m_item = null;
 
-    [SerializeField] public InventorySlot inventorySlot;
+    [SerializeField] public InventorySlot sloot;
     public Item item
     {
         get { return m_item; }
@@ -108,7 +115,7 @@ public class TestScript : MonoBehaviour
     {
         if (item == null)
         {
-            Debug.Log("Item is null");
+            Debug.Log("Item is null.");
             return;
         }
 
