@@ -30,6 +30,8 @@ public class TestScript : MonoBehaviour
     [ReadOnly]
     #endif 
     [SerializeField] private Item m_item = null;
+
+    [SerializeField] public InventorySlot inventorySlot;
     public Item item
     {
         get { return m_item; }
