@@ -1,7 +1,7 @@
 RangedWeapon
 {
     "m_id": "shotgun",
-    "m_variantID": "",
+    "m_variantID": "14693716-e7b4-464e-acf8-7426ddb90087",
     "m_displayName": "Shotgun",
     "m_description": "A 12-gauge double barrel shotgun. BANG! BANG!",
     "m_icon": {
@@ -17,5 +17,5 @@ RangedWeapon
             "m_payload": "false"
         }
     ],
-    "m_damage": 20.0
+    "m_damage": 30.0
 }

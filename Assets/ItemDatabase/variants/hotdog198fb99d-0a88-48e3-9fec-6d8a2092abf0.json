@@ -1,11 +1,16 @@
 Item
 {
     "m_id": "hotdog",
-    "m_variantID": "",
+    "m_variantID": "198fb99d-0a88-48e3-9fec-6d8a2092abf0",
     "m_displayName": "Hotdog",
     "m_description": "Surely you know what a hotdog is? its long and meat/bread",
     "m_icon": {
         "instanceID": 0
     },
-    "m_tags": []
+    "m_tags": [
+        {
+            "m_name": "mymod",
+            "m_payload": "1"
+        }
+    ]
 }

@@ -9,17 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f90fa149c377104f9cf9c91644b4e5e, type: 3}
-  m_Name: shotgun
+  m_Script: {fileID: 11500000, guid: 70468ca514ed0324c960b68986f34e30, type: 3}
+  m_Name: hotdog
   m_EditorClassIdentifier: 
-  m_id: shotgun
+  m_id: hotdog
   m_variantID: 
-  m_displayName: Shotgun
-  m_description: A 12-gauge double barrel shotgun. BANG! BANG!
+  m_displayName: Hotdog
+  m_description: Surely you know what a hotdog is? its long and meat/bread
   m_icon: {fileID: 0}
-  m_tags:
-  - m_name: leftchamber
-    m_payload: true
-  - m_name: rightchamber
-    m_payload: false
-  m_damage: 20
+  m_tags: []

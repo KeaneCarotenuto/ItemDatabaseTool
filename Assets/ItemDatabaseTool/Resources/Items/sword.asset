@@ -9,12 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70468ca514ed0324c960b68986f34e30, type: 3}
-  m_Name: Item
+  m_Script: {fileID: 11500000, guid: 0445a2ed758c93e4286ccaf68d7954b2, type: 3}
+  m_Name: sword
   m_EditorClassIdentifier: 
-  m_id: item_0
+  m_id: sword
   m_variantID: 
   m_displayName: New Item EE
   m_description: New Item Description
   m_icon: {fileID: 0}
-  m_tags: []
+  m_tags:
+  - m_name: newtag
+    m_payload: 
+  m_length: 0
