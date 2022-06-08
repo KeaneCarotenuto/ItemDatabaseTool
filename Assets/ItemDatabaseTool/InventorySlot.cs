@@ -58,19 +58,36 @@ public class InventorySlot : UnityEngine.Object
             int indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
 
-            property.isExpanded = EditorGUI.BeginFoldoutHeaderGroup(position, property.isExpanded, label);
+            // Calculate rects
+            Rect itemRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight, 50, EditorGUIUtility.singleLineHeight);
+            Rect typeButtonRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight * 3.0f, 50, EditorGUIUtility.singleLineHeight);
 
-            if (property.isExpanded){
-                // Calculate rects
-                Rect itemRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight, 50, position.height / 4);
-                Rect typeButtonRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight * 2.0f, 50, position.height / 4);
-
-                // draw the item
-                inventorySlot.item = (Item)EditorGUI.ObjectField(itemRect, inventorySlot.item, typeof(Item), false);
+            // draw the item
+            inventorySlot.item = (Item)EditorGUI.ObjectField(itemRect, inventorySlot.item, typeof(Item), false);
 
 
-                EditorGUI.FloatField(typeButtonRect, 2);
-                // testing
+            // dropdown for item type
+            // array of possible types
+            string[] names = Item.AllTypes.Select(t => t.Name).ToArray();
+            names = names.Concat(new string[] { typeof(Item).Name }).ToArray();
+
+            // array of current types
+            string[] currentTypes = inventorySlot.typeFilter.Select(t => t.Name).ToArray();
+
+            // display the GenericMenu when pressing a button
+            if (GUI.Button(new Rect(position.x, position.y + 20, position.width, position.height), "Types"))
+            {
+
+                // draw the dropdown
+                GenericMenu menu = new GenericMenu();
+                for (int i = 0; i < names.Length; i++)
+                {
+                    string name = names[i];
+                    menu.AddItem(new GUIContent(name), currentTypes.Contains(name), () => { inventorySlot.typeFilter.Add(System.Type.GetType(name)); });
+                }
+
+                // draw the dropdown
+                menu.ShowAsContext();
             }
 
             EditorGUI.EndFoldoutHeaderGroup();
@@ -84,18 +101,19 @@ public class InventorySlot : UnityEngine.Object
             
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            if (property.isExpanded)
+        public override float GetPropertyHeight (SerializedProperty property, GUIContent label) {
+ 
+            SerializedObject childObj = new UnityEditor.SerializedObject(property.serializedObject.targetObject);
+            SerializedProperty ite = childObj.GetIterator();
+    
+            float totalHeight = EditorGUI.GetPropertyHeight (property, label, true) + EditorGUIUtility.standardVerticalSpacing;
+    
+            while (ite.NextVisible(true))
             {
-                return EditorGUIUtility.singleLineHeight + // the foldout
-                    (3) *      // for each related obj:
-                    (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing);
+                totalHeight += EditorGUI.GetPropertyHeight(ite, label, true) + EditorGUIUtility.standardVerticalSpacing;
             }
-            else
-            {
-                return EditorGUIUtility.singleLineHeight;
-            }
+ 
+            return totalHeight;
         }
     }
     #endif
