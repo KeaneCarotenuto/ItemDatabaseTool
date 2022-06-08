@@ -23,22 +23,12 @@ public class TestScript : MonoBehaviour
     }
     #endif
 
-    [Serializable]
-    public class testClass{
-        public int a = 0;
-        public int b = 0;
-    }
-
-    [SerializeField] public List<testClass> testList = new List<testClass>();
-
     public Item itemToGive;
 
     #if UNITY_EDITOR 
     [ReadOnly]
     #endif 
     [SerializeField] private Item m_item = null;
-
-    [SerializeField] public InventorySlot sloot;
     public Item item
     {
         get { return m_item; }
@@ -50,6 +40,8 @@ public class TestScript : MonoBehaviour
             }
         }
     }
+
+    [SerializeField] public InventorySlot sloot;
 
     public string GetSavePath()
     {
