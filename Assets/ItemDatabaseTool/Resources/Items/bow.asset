@@ -17,9 +17,10 @@ MonoBehaviour:
   m_displayName: Bow
   m_description: Classic wooden bow.
   m_icon: {fileID: 0}
+  mustMatchToStack: 0
+  m_currentStackSize: 1
+  m_maxStackSize: 1
   m_tags:
   - m_name: drawn
     m_payload: false
-  m_currentStackSize: 1
-  m_maxStackSize: 1
   m_damage: 0

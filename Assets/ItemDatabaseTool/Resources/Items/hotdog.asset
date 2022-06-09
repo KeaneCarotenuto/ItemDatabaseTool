@@ -17,6 +17,7 @@ MonoBehaviour:
   m_displayName: Hotdog
   m_description: Surely you know what a hotdog is? its long and meat/bread
   m_icon: {fileID: 0}
-  m_tags: []
+  mustMatchToStack: 1
   m_currentStackSize: 1
   m_maxStackSize: 12
+  m_tags: []

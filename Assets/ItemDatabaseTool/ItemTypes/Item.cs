@@ -65,10 +65,9 @@ public class Item : ScriptableObject
     [SerializeField] public string m_description = "";
     [SerializeField] public Sprite m_icon = null;
 
-    [SerializeField] public List<TagManager.Tag> m_tags = new List<TagManager.Tag>();
-
+    [SerializeField] public bool mustMatchToStack = false;
     [SerializeField] private int m_currentStackSize = 1;
-    public int currentStackSize
+        public int currentStackSize
     {
         get { return m_currentStackSize; }
         set
@@ -106,6 +105,9 @@ public class Item : ScriptableObject
         }
     }
 
+
+    [SerializeField] public List<TagManager.Tag> m_tags = new List<TagManager.Tag>();
+
     /// <summary>
     /// Attempts to stack the given item with this one.
     /// </summary>
@@ -117,6 +119,27 @@ public class Item : ScriptableObject
         if (this.GetType() != _item.GetType() || this.id != _item.id){
             Debug.LogWarning("Trying to add an item of a different type or id to a stack");
             return _item;
+        }
+
+        // compare strings
+        if (mustMatchToStack){
+            Item thisTemp = this.CreateInstance();
+            thisTemp.instanceID = "";
+            thisTemp.currentStackSize = 0;
+
+            Item otherTemp = _item.CreateInstance();
+            otherTemp.instanceID = "";
+            otherTemp.currentStackSize = 0;
+
+            // convert to json
+            string thisJson = JsonUtility.ToJson(thisTemp);
+            string otherJson = JsonUtility.ToJson(otherTemp);
+
+            // compare json
+            if (thisJson != otherJson){
+                Debug.LogWarning("Trying to add an item with different data to a stack");
+                return _item;
+            }
         }
 
         // add to stack as long as there is room
@@ -164,10 +187,12 @@ public class Item : ScriptableObject
         item.m_displayName = this.m_displayName;
         item.m_description = this.m_description;
         item.m_icon = this.m_icon;
-        item.m_tags = this.m_tags;
+        // Make sure to COPY lists, not pass by reference
+        item.m_tags = new List<TagManager.Tag>(this.m_tags);
 
         item.currentStackSize = this.m_currentStackSize;
         item.maxStackSize = this.m_maxStackSize;
+        item.mustMatchToStack = this.mustMatchToStack;
 
         if (item.name == "")
         {
@@ -302,6 +327,25 @@ public class Item : ScriptableObject
             item.m_description = EditorGUILayout.TextField("Description: ", item.m_description);
             item.m_icon = EditorGUILayout.ObjectField("Icon: ", item.m_icon, typeof(Sprite), false) as Sprite;
 
+            // stack info box
+            GUILayout.BeginVertical("box");
+            // bold text
+            GUILayout.Label("Stack Info", CustomEditorStuff.center_bold_label);
+
+            // horiz
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(new GUIContent("Current Stack Size: ","The current amount of items in this stack"));
+            item.currentStackSize = EditorGUILayout.IntField(item.currentStackSize);
+
+            GUILayout.Label(new GUIContent("Max Stack Size: ","The maximum amount of items in this stack"));
+            item.maxStackSize = EditorGUILayout.IntField(item.maxStackSize);
+            GUILayout.EndHorizontal();
+            
+            item.mustMatchToStack = EditorGUILayout.Toggle(new GUIContent("Must Match To Stack: ", "Items of the same type must match in all other spects to stack"), item.mustMatchToStack);
+
+            // end stack info box
+            GUILayout.EndVertical();
+
             //tags
             showTags = EditorGUILayout.Foldout(showTags, "Tags", true, new GUIStyle(EditorStyles.foldout) { fontStyle = FontStyle.Bold});
             if (showTags){
@@ -326,8 +370,14 @@ public class Item : ScriptableObject
                 {
                     item.m_tags.Add(new TagManager.Tag("New Tag"));
 
+                    int c =ItemDatabase.database.Count();
+
                     // save
-                    EditorUtility.SetDirty(item);
+                    // if not in play mode, save (set dirty)
+                    if (!Application.isPlaying)
+                    {
+                        EditorUtility.SetDirty(this);
+                    }
                 }
                 GUILayout.EndVertical();
             }
@@ -339,7 +389,11 @@ public class Item : ScriptableObject
             // on change save
             if (GUI.changed)
             {
-                EditorUtility.SetDirty(item);
+                // if not in play mode, save (set dirty)
+                if (!Application.isPlaying)
+                {
+                    EditorUtility.SetDirty(this);
+                }
             }
         }
     }

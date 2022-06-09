@@ -63,7 +63,11 @@ public class DatabaseWindow : EditorWindow {
         if (GUI.changed)
         {
             ItemDatabase.Refresh();
-            EditorUtility.SetDirty(this);
+            // if not in play mode, save (set dirty)
+            if (!Application.isPlaying)
+            {
+                EditorUtility.SetDirty(this);
+            }
         }
 
         Event e = Event.current;
@@ -143,7 +147,7 @@ public class DatabaseWindow : EditorWindow {
         //search bar
         GUILayout.BeginHorizontal();
         GUILayout.Label("Search: ", GUILayout.MaxWidth(50));
-        searchText = GUILayout.TextField(searchText, GUILayout.MinWidth(100));
+        searchText = GUILayout.TextField(searchText, GUILayout.MinWidth(50));
         if (GUILayout.Button(new GUIContent("Clear", "Clears the search bar"), GUILayout.MaxWidth(75)))
         {
             searchText = "";

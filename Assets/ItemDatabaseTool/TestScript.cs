@@ -40,18 +40,6 @@ public class TestScript : MonoBehaviour
             Log("ItemDatabase.database.Count: " + ItemDatabase.database.Count);
         }
 
-        // if d is pressed, save the ItemDatabase to file
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            ItemDatabase.SaveListToFile();
-        }
-
-        // if f is pressed, load the ItemDatabase from file
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            ItemDatabase.LoadListFromFile();
-        }
-
         // if enter is pressed, try send command
         if (Input.GetKeyDown(KeyCode.Return))
         {

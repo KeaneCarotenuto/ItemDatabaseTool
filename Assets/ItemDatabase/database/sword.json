@@ -7,13 +7,14 @@ MeleeWeapon
     "m_icon": {
         "instanceID": 0
     },
+    "mustMatchToStack": false,
+    "m_currentStackSize": 1,
+    "m_maxStackSize": 1,
     "m_tags": [
         {
             "m_name": "newtag",
             "m_payload": ""
         }
     ],
-    "m_currentStackSize": 1,
-    "m_maxStackSize": 1,
     "m_length": 0.0
 }

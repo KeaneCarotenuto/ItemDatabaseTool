@@ -249,8 +249,11 @@ public class Inventory : MonoBehaviour
 
             ValidateID();
 
-            // set dirty
-            EditorUtility.SetDirty(this);
+            // if not in play mode, save (set dirty)
+            if (!Application.isPlaying)
+            {
+                EditorUtility.SetDirty(this);
+            }
         }
     }
 
@@ -349,6 +352,8 @@ public class Inventory : MonoBehaviour
             EditorGUILayout.BeginHorizontal();
             //slots 
             EditorGUILayout.LabelField("Slots [" + inventory.m_slots.Count + "]", CustomEditorStuff.bold_label);
+            
+            EditorGUILayout.LabelField("Filter");
             EditorGUILayout.EndHorizontal();
             for (int i = 0; i < inventory.m_slots.Count; i++)
             {
@@ -415,7 +420,11 @@ public class Inventory : MonoBehaviour
             // save on change
             if (GUI.changed)
             {
-                EditorUtility.SetDirty(inventory);
+                // if not in play mode, save (set dirty)
+                if (!Application.isPlaying)
+                {
+                    EditorUtility.SetDirty(this);
+                }
             }
         }
     }
