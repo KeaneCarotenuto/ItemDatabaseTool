@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: shotgun_shell
   m_EditorClassIdentifier: 
   m_id: shotgun_shell_buckshot
-  m_variantID: 
+  m_instanceID: 
   m_displayName: Shotgun Shell
   m_description: A shell for a 12-gauge shotgun. BANG!
   m_icon: {fileID: 0}

@@ -57,11 +57,41 @@ public class Inventory : MonoBehaviour
                     return;
                 }
 
-                if (m_item.variantID == "")
+                if (m_item.instanceID == "")
                 {
-                    m_item = m_item.CreateVariant();
+                    m_item = m_item.CreateInstance();
                 }
             }
+        }
+
+        /// <summary>
+        /// Attempt to add an item to this slot (matching filter), tries to stack if possible.
+        /// </summary>
+        public Item TryAddItemToSlot(Item _item)
+        {
+            // if item is null, return
+            if (_item == null) return null;
+
+            // if slot is not empty, try to stack
+            if (this.item != null)
+            {
+                _item = this.item.TryAddToStack(_item);
+
+                return _item;
+            }
+
+            // check if item type is in filter
+            if (typeFilter.Count() > 0 && !typeFilter.Contains(_item.GetType().Name))
+            {
+                Debug.LogWarning("Item type does not match inventory type filter.");
+
+                return _item;
+            }
+
+            // set item
+            this.item = _item;
+
+            return null;
         }
     }
 
@@ -81,40 +111,43 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// Add an item to the inventory by reference.
     /// </summary>
-    public void AddItem(Item _item){
+    public Item AddItemToInventory(Item _item){
         // if item is null, return
-        if (_item == null) return;
+        if (_item == null) return null;
+        int startAmount = _item.currentStackSize;
 
-        // if item is in inventory, add to stack
-        if (m_slots.Any(x => x.item != null && x.item.id == _item.id && x.item.variantID == _item.variantID)) {
-            InventorySlot slot = m_slots.Find(x => x.item != null && x.item.id == _item.id && x.item.variantID == _item.variantID);
+        // loop through all slots and try to add item while not null
+        for (int i = 0; i < m_slots.Count; i++)
+        {
+            InventorySlot slot = m_slots[i];
             
-            slot.item.TryAddToStack(_item);
-
-            return;
+            _item = slot.TryAddItemToSlot(_item);
         }
 
-        // if item is not in inventory, try to add to empty valid slot
-        if (m_slots.Any(x => x.item == null && x.typeFilter.Count() <= 0 || (x.typeFilter.Count() > 0 && x.typeFilter.Contains(_item.GetType().Name)))) {
-            InventorySlot slot = m_slots.Find(x => x.item == null && x.typeFilter.Count() <= 0 || (x.typeFilter.Count() > 0 && x.typeFilter.Contains(_item.GetType().Name)));
+        if (_item != null)
+        {
+            int endAmount = _item.currentStackSize;
 
-            slot.item = _item;
+            Debug.Log("Could not add all: Added " + (endAmount - startAmount) + "/" + startAmount + " of " + _item.name + " to inventory.");
+        }
 
-            return;
-        }
-        else{
-            Debug.LogWarning("No empty valid slot found.");
-            return;
-        }
+        return _item;
     }
 
     /// <summary>
     /// Tries to add an item to the inventory by ID.
     /// </summary>
-    public void AddItem(string _id){
+    public bool AddItemToInventory(string _id, int _amount = 1){
         Item item = ItemDatabase.GetItem(_id);
+        if (item == null) return false;
 
-        AddItem(item);
+        item = item.CreateInstance();
+        item.currentStackSize = _amount;
+
+        item = AddItemToInventory(item);
+        if (item == null) return true;
+
+        return false;
     }
 
     public string GetSavePath()
@@ -141,8 +174,8 @@ public class Inventory : MonoBehaviour
         {
             if (slot.item != null)
             {
-                string fileName = slot.item.id + slot.item.variantID + ".json";
-                Item.Save(Item.GetVariantSavePath(), fileName, slot.item);
+                string fileName = slot.item.id + slot.item.instanceID + ".json";
+                Item.Save(Item.GetInstanceSavePath(), fileName, slot.item);
 
                 fileNames.Add(fileName);
             }
@@ -178,7 +211,7 @@ public class Inventory : MonoBehaviour
 
             if (fileName == "") continue;
 
-            Item item = Item.Load(Item.GetVariantSavePath(), fileName);
+            Item item = Item.Load(Item.GetInstanceSavePath(), fileName);
 
             if (item == null)
             {

@@ -1,7 +1,7 @@
 Item
 {
     "m_id": "shotgun_shell_buckshot",
-    "m_variantID": "",
+    "m_instanceID": "",
     "m_displayName": "Shotgun Shell",
     "m_description": "A shell for a 12-gauge shotgun. BANG!",
     "m_icon": {
@@ -12,5 +12,7 @@ Item
             "m_name": "inflict_bleed",
             "m_payload": "true"
         }
-    ]
+    ],
+    "m_currentStackSize": 1,
+    "m_maxStackSize": 1
 }

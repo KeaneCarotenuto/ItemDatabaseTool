@@ -1,13 +1,13 @@
 Item
 {
     "m_id": "hotdog",
-    "m_variantID": "2f957094-e5ab-4f47-8e46-d69e1196c348",
+    "m_instanceID": "438913d9-6d12-4e54-be3d-0f39b7ad16ce",
     "m_displayName": "Hotdog",
     "m_description": "Surely you know what a hotdog is? its long and meat/bread",
     "m_icon": {
         "instanceID": 0
     },
     "m_tags": [],
-    "m_currentStackSize": 1,
-    "m_maxStackSize": 1
+    "m_currentStackSize": 3,
+    "m_maxStackSize": 12
 }

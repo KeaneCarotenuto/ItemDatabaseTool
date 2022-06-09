@@ -12,7 +12,8 @@ using UnityEditor;
 [Serializable]
 public class TestScript : MonoBehaviour
 {
-    public Item itemToGive;
+    public TMP_InputField consoleInput;
+    public TextMeshProUGUI consoleLog;
 
     // Update is called once per frame
     void Update()
@@ -31,19 +32,12 @@ public class TestScript : MonoBehaviour
             GetComponent<Inventory>().LoadInventory();
         }
 
-        // if G is pressed, give the item to the player
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            GetComponent<Inventory>().AddItem(itemToGive.id);
-        }
-
         // if c is pressed, log ItemDatabase.database.Count
         if (Input.GetKeyDown(KeyCode.C))
         {
             Debug.Log(ItemDatabase.database.Count);
             // find TextMeshProGUI and set it to the count
-            TextMeshProUGUI text = FindObjectOfType<TextMeshProUGUI>();
-            text.text += "\n" + ItemDatabase.database.Count.ToString();
+            Log("ItemDatabase.database.Count: " + ItemDatabase.database.Count);
         }
 
         // if d is pressed, save the ItemDatabase to file
@@ -57,5 +51,47 @@ public class TestScript : MonoBehaviour
         {
             ItemDatabase.LoadListFromFile();
         }
+
+        // if enter is pressed, try send command
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            if (!consoleInput) return;
+            string text = consoleInput.text;
+            if (text == "") return;
+
+            TrySendCommand(text);
+
+            consoleInput.text = "";
+        }
+    }
+
+    public void TrySendCommand(string _command){
+        Log(_command);
+
+        // e.g. "give item_id amount"
+        string[] split = _command.Split(' ');
+        if (split.Length >= 2 && split[0] == "give")
+        {
+            string itemID = split[1];
+            int amount = split.Length >= 3 ? int.Parse(split[2]) : 1;
+
+            // give the item to the player
+            if (GetComponent<Inventory>().AddItemToInventory(itemID, amount)){
+                Log("- You have received " + itemID);
+            }
+            else{
+                Log("- Could not give " + itemID);
+            }
+        }
+        else{
+            Log("- Invalid command");
+        }
+    }
+
+    public void Log(string _text)
+    {
+        if (!consoleLog) return;
+
+        consoleLog.text += "\n" + _text + "\n";
     }
 }

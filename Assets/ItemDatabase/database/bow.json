@@ -1,7 +1,7 @@
 RangedWeapon
 {
     "m_id": "bow",
-    "m_variantID": "",
+    "m_instanceID": "",
     "m_displayName": "Bow",
     "m_description": "Classic wooden bow.",
     "m_icon": {
@@ -13,5 +13,7 @@ RangedWeapon
             "m_payload": "false"
         }
     ],
+    "m_currentStackSize": 1,
+    "m_maxStackSize": 1,
     "m_damage": 0.0
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: bow
   m_EditorClassIdentifier: 
   m_id: bow
-  m_variantID: 
+  m_instanceID: 
   m_displayName: Bow
   m_description: Classic wooden bow.
   m_icon: {fileID: 0}

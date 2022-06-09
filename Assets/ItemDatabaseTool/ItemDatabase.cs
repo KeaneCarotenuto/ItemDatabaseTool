@@ -27,7 +27,7 @@ public class ItemDatabase
         Item item = database.Find(x => x.id == id);
         if (item == null)
         {
-            Debug.LogError("Item with id " + id + " not found.");
+            Debug.LogWarning("Item with id " + id + " not found.");
         }
         return item;
     }

@@ -1,7 +1,7 @@
 MeleeWeapon
 {
     "m_id": "sword",
-    "m_variantID": "",
+    "m_instanceID": "",
     "m_displayName": "New Item EE",
     "m_description": "New Item Description",
     "m_icon": {
@@ -13,5 +13,7 @@ MeleeWeapon
             "m_payload": ""
         }
     ],
+    "m_currentStackSize": 1,
+    "m_maxStackSize": 1,
     "m_length": 0.0
 }

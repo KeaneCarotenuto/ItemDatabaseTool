@@ -17,8 +17,8 @@ public class Item : ScriptableObject
 {
     [NonSerialized] public static readonly IEnumerable<System.Type> AllTypes;
 
-    public static string GetVariantSavePath(){
-        return Application.dataPath + "/ItemDatabase/variants/";
+    public static string GetInstanceSavePath(){
+        return Application.dataPath + "/ItemDatabase/instances/";
     }
 
     static Item()
@@ -50,13 +50,13 @@ public class Item : ScriptableObject
         }
     }
 
-    [SerializeField] private string m_variantID = "";
-    [SerializeField] public string variantID
+    [SerializeField] private string m_instanceID = "";
+    [SerializeField] public string instanceID
     {
-        get { return m_variantID; }
+        get { return m_instanceID; }
         set
         {
-            m_variantID = value;
+            m_instanceID = value;
         }
     }
     
@@ -75,9 +75,9 @@ public class Item : ScriptableObject
         {
             m_currentStackSize = value;
 
-            if (m_currentStackSize < 1)
+            if (m_currentStackSize <= 0)
             {
-                m_currentStackSize = 1;
+                m_currentStackSize = 0;
             }
 
             if (m_currentStackSize > m_maxStackSize)
@@ -106,21 +106,38 @@ public class Item : ScriptableObject
         }
     }
 
-    // TODO: need to make this merge with the other item's stats (stack size, check for values the same excluding variantID, perhaps bool to ignore variantID) also return what ever is not merged (new function?)
-    public bool TryAddToStack(Item _item){
-        if (this.GetType() != _item.GetType() || this.id != _item.id && this.variantID != _item.variantID){
+    /// <summary>
+    /// Attempts to stack the given item with this one.
+    /// </summary>
+    /// <param name="_item">The item to stack with this one.</param>
+    /// <returns>If fully stacked, returns null, otherwise returns back the item minus the amount that was stacked</returns>
+    public Item TryAddToStack(Item _item){
+
+        // check invalid type
+        if (this.GetType() != _item.GetType() || this.id != _item.id){
             Debug.LogWarning("Trying to add an item of a different type or id to a stack");
-            return false;
+            return _item;
         }
 
-        if (currentStackSize < maxStackSize){
-            currentStackSize++;
-            return true;
+        // add to stack as long as there is room
+        int amountToAdd = _item.currentStackSize;
+        int spareSpace = m_maxStackSize - m_currentStackSize;
+        int amountToAddToStack = Mathf.Min(amountToAdd, spareSpace);
+
+        if (amountToAddToStack > 0)
+        {
+            _item.currentStackSize -= amountToAddToStack;
+            m_currentStackSize += amountToAddToStack;
         }
-        else {
-            Debug.LogWarning("Trying to add an item to a full stack");
-            return false;
+
+        // if the item is now empty, return null
+        if (_item.currentStackSize <= 0)
+        {
+            return null;
         }
+
+        // otherwise return the item minus the amount that was stacked
+        return _item;
     }
 
     public void ValidateID(){
@@ -134,20 +151,23 @@ public class Item : ScriptableObject
     }
 
     /// <summary>
-    /// Make variant of this item.
+    /// Make instance of this item.
     /// </summary>
-    /// <returns>The variant.</returns>
-    public virtual Item CreateVariant()
+    /// <returns>The instance.</returns>
+    public virtual Item CreateInstance()
     {
         string typeName = this.GetType().Name;
         Item item = (Item)Item.CreateInstance(typeName);
 
-        item.variantID = Guid.NewGuid().ToString();
+        item.instanceID = Guid.NewGuid().ToString();
         item.m_id = this.id;
         item.m_displayName = this.m_displayName;
         item.m_description = this.m_description;
         item.m_icon = this.m_icon;
         item.m_tags = this.m_tags;
+
+        item.currentStackSize = this.m_currentStackSize;
+        item.maxStackSize = this.m_maxStackSize;
 
         if (item.name == "")
         {
@@ -275,7 +295,7 @@ public class Item : ScriptableObject
             GUILayout.EndHorizontal();
             // disabled varint id
             EditorGUI.BeginDisabledGroup(true);
-            item.variantID = EditorGUILayout.TextField("Variant ID: ", item.variantID);
+            item.instanceID = EditorGUILayout.TextField("Instance ID: ", item.instanceID);
             EditorGUI.EndDisabledGroup();
             
             item.m_displayName = EditorGUILayout.TextField("Display Name: ", item.m_displayName);

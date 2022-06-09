@@ -1,7 +1,7 @@
 RangedWeapon
 {
     "m_id": "bow",
-    "m_variantID": "e477129f-5210-4e91-9760-00d21ce7e97d",
+    "m_instanceID": "d87ce3b1-1d92-4cd6-a487-2b10b217ec6e",
     "m_displayName": "Bow",
     "m_description": "Classic wooden bow.",
     "m_icon": {
