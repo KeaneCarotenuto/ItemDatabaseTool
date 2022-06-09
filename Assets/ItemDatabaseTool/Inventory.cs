@@ -19,13 +19,17 @@ public class Inventory : MonoBehaviour
     // constructor
     public Inventory()
     {
-        AddInvetory(this);
+        AddInventory(this);
     }
 
     // destructor
     ~Inventory()
     {
-        RemoveInvetory(this);
+        RemoveInventory(this);
+    }
+
+    private void Start() {
+        AddInventory(this);
     }
 
     [Serializable]
@@ -236,6 +240,14 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public void ClearInventory()
+    {
+        foreach (InventorySlot slot in m_slots)
+        {
+            slot.item = null;
+        }
+    }
+
     public void ValidateID(){
         //correct id
         //to lower
@@ -246,32 +258,17 @@ public class Inventory : MonoBehaviour
         m_id = m_id.Replace(" ", "_");
     }
 
-
-    #if UNITY_EDITOR
-    private void OnValidate() {
-        if (m_id == "") {
-            m_id = System.Guid.NewGuid().ToString();
-
-            ValidateID();
-
-            // if not in play mode, save (set dirty)
-            if (!Application.isPlaying)
-            {
-                EditorUtility.SetDirty(this);
-            }
-        }
-    }
-
-    public static void AddInvetory(Inventory inventory)
+    public static void AddInventory(Inventory inventory)
     {
         if (allInventories.Contains(inventory))
         {
-            return;
+            // remove
+            allInventories.Remove(inventory);
         }
         allInventories.Add(inventory);
     }
 
-    public static void RemoveInvetory(Inventory inventory)
+    public static void RemoveInventory(Inventory inventory)
     {
         if (!allInventories.Contains(inventory))
         {
@@ -332,15 +329,27 @@ public class Inventory : MonoBehaviour
             }
         }
     }
-    
 
+
+    #if UNITY_EDITOR
+    private void OnValidate() {
+        if (m_id == "") {
+            m_id = System.Guid.NewGuid().ToString();
+
+            ValidateID();
+
+            // if not in play mode, save (set dirty)
+            if (!Application.isPlaying)
+            {
+                EditorUtility.SetDirty(this);
+            }
+        }
+    }
 
     // custom editor
     [CustomEditor(typeof(Inventory))]
     public class InventoryEditor : Editor
     {
-        static int objectSelectorIndex = -1;
-
         public override void OnInspectorGUI()
         {
             //DrawDefaultInspector();

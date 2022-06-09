@@ -194,7 +194,11 @@ public class ItemDatabase
         {
             LoadListFromFile();
         }
+
+        
+        CleanUpFiles();
     }
+
 
     #if UNITY_EDITOR
     /// <summary>
@@ -316,6 +320,64 @@ public class ItemDatabase
             // if file does not ends in .meta, continue
             if (!fileName.EndsWith(".meta")) continue;
 
+            File.Delete(filePath);
+        }
+    }
+
+    static public void CleanUpFiles()
+    {
+        // delete all instance files that are not in any inventories and not in any save files
+
+        // get all files in the instance folder
+        string[] instanceSaveFiles = Directory.GetFiles(Item.GetInstanceSavePath(), "*.json");
+        // convert to file names
+
+
+        // get all inventories in the game
+        List<Inventory> inventories = Inventory.allInventories;
+
+        // get all inventory save files
+        List<string> savedInstances = new List<string>();
+        foreach (Inventory inventory in inventories)
+        {
+            //if file does not exist, continue
+            if (!File.Exists(inventory.GetSaveFilePath())) continue;
+
+            // get every line of the inventory save file
+            List<string> lines = File.ReadAllLines(inventory.GetSaveFilePath()).ToList();
+
+            // combine lines into savedInstances
+            savedInstances = savedInstances.Union(lines).ToList();
+        }
+
+        // for each file in the instance folder, check if it is in the inventory or save files
+        foreach (string filePath in instanceSaveFiles)
+        {
+            string fileName = Path.GetFileName(filePath);
+            // if file does not ends in .json, continue
+            if (!fileName.EndsWith(".json")) continue;
+
+            // if file is in the inventory save files, continue
+            if (savedInstances.Contains(fileName)) continue;
+
+            bool inInventory = false;
+            // if id and instance id exist in any inventory, continue
+            foreach (Inventory inventory in inventories)
+            {
+                for (int i = 0; i < inventory.slots.Count; i++)
+                {
+                    Item item = inventory.slots[i].item;
+                    if (item != null && fileName.Contains(item.id) && fileName.Contains(item.instanceID))
+                    {
+                        inInventory = true;
+                        break;
+                    }
+                }
+                if (inInventory) break;
+            }
+            if (inInventory) continue;
+
+            // delete the file
             File.Delete(filePath);
         }
     }
