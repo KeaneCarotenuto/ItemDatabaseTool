@@ -21,6 +21,10 @@ public class Item : ScriptableObject
         return Application.dataPath + "/ItemDatabase/instances/";
     }
 
+    public string GetInstanceFileName(){
+        return this.id + this.instanceID + ".json";
+    }
+
     static Item()
     {
         System.Type type = typeof(Item);
@@ -107,6 +111,22 @@ public class Item : ScriptableObject
 
 
     [SerializeField] public List<TagManager.Tag> m_tags = new List<TagManager.Tag>();
+
+    public void DestroyInstance()
+    {
+        if (string.IsNullOrEmpty(instanceID))
+        {
+            return;
+        }
+
+        string path = GetInstanceSavePath() + GetInstanceFileName();
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+
+        Destroy(this);
+    }
 
     /// <summary>
     /// Attempts to stack the given item with this one.
@@ -334,10 +354,10 @@ public class Item : ScriptableObject
 
             // horiz
             GUILayout.BeginHorizontal();
-            GUILayout.Label(new GUIContent("Current Stack Size: ","The current amount of items in this stack"));
+            GUILayout.Label(new GUIContent("Current Stack: ","The current amount of items in this stack"));
             item.currentStackSize = EditorGUILayout.IntField(item.currentStackSize);
 
-            GUILayout.Label(new GUIContent("Max Stack Size: ","The maximum amount of items in this stack"));
+            GUILayout.Label(new GUIContent("Max Stack: ","The maximum amount of items in this stack"));
             item.maxStackSize = EditorGUILayout.IntField(item.maxStackSize);
             GUILayout.EndHorizontal();
             
@@ -347,7 +367,10 @@ public class Item : ScriptableObject
             GUILayout.EndVertical();
 
             //tags
+            // indent
+            EditorGUI.indentLevel++;
             showTags = EditorGUILayout.Foldout(showTags, "Tags", true, new GUIStyle(EditorStyles.foldout) { fontStyle = FontStyle.Bold});
+            EditorGUI.indentLevel--;
             if (showTags){
                 GUI.backgroundColor = Color.white;
                 GUILayout.BeginVertical("box");
@@ -355,8 +378,10 @@ public class Item : ScriptableObject
                 for (int i = 0; i < item.m_tags.Count; i++)
                 {
                     GUILayout.BeginHorizontal();
-                    item.m_tags[i].name = EditorGUILayout.TextField("Tag Name: ", item.m_tags[i].name);
-                    item.m_tags[i].payload = EditorGUILayout.TextField("Payload: ", item.m_tags[i].payload);
+                    GUILayout.Label(new GUIContent("Tag Name: ", "The name of this tag"));
+                    item.m_tags[i].name = EditorGUILayout.TextField(item.m_tags[i].name);
+                    GUILayout.Label(new GUIContent("Payload: ", "The value of this tag"));
+                    item.m_tags[i].payload = EditorGUILayout.TextField(item.m_tags[i].payload);
                     GUI.backgroundColor = Color.red;
                     if (GUILayout.Button("X", GUILayout.Width(20)))
                     {

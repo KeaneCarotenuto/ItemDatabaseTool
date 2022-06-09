@@ -107,6 +107,11 @@ public class Inventory : MonoBehaviour
     }
 
     [SerializeField] private List<InventorySlot> m_slots = new List<InventorySlot>();
+    [SerializeField] public List<InventorySlot> slots
+    {
+        get { return m_slots; }
+        set { m_slots = value; }
+    }
 
     /// <summary>
     /// Add an item to the inventory by reference.
@@ -174,7 +179,7 @@ public class Inventory : MonoBehaviour
         {
             if (slot.item != null)
             {
-                string fileName = slot.item.id + slot.item.instanceID + ".json";
+                string fileName = slot.item.GetInstanceFileName();
                 Item.Save(Item.GetInstanceSavePath(), fileName, slot.item);
 
                 fileNames.Add(fileName);
