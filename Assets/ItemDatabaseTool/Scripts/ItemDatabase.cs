@@ -12,9 +12,17 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 #endif
 
-[Serializable]
+[Serializable][InitializeOnLoad]
 public class ItemDatabase
 {
+    // constructor
+    static ItemDatabase(){
+        #if UNITY_EDITOR
+        Refresh();
+        Initialize();
+        #endif
+    }
+
     [SerializeField] public static List<Item> database = new List<Item>();
 
     /// <summary>
@@ -326,6 +334,12 @@ public class ItemDatabase
 
     static public void CleanUpFiles()
     {
+        // if directory does not exist, create it
+        if (!Directory.Exists(Item.GetInstanceSavePath()))
+        {
+            Directory.CreateDirectory(Item.GetInstanceSavePath());
+        }
+
         // delete all instance files that are not in any inventories and not in any save files
 
         // get all files in the instance folder

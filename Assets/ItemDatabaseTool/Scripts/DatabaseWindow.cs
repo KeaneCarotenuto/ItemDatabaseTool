@@ -374,6 +374,12 @@ public class DatabaseWindow : EditorWindow {
             return;
         }
 
+        // validate the name
+        //replace non letters with ""
+        newItemTypeName = Regex.Replace(newItemTypeName, @"[^A-Za-z]", "");
+        //replace space with ""
+        newItemTypeName = newItemTypeName.Replace(" ", "");
+
         // if path doesnt exist, create it (itemTypePath)
         if (!Directory.Exists(itemTypePath))
         {
