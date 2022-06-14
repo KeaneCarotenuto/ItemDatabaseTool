@@ -6,6 +6,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Linq;
+using TMPro;
+using UnityEngine.SceneManagement;
 // json serialization
 
 #if UNITY_EDITOR

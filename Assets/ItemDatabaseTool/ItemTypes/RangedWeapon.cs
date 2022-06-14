@@ -5,54 +5,64 @@ using System;
 using System.Reflection;
 using System.Linq;
 
+//[REQUIRED]
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
+/// <summary>
+/// An example of a custom item type that can be used in the item database.
+/// </summary>
+//Make sure to set the [Serializable] attribute on this class, so that it can be saved!
 [Serializable]
 public class RangedWeapon : Item
 {
+    // make sure to set variables as serialized fields in the inspector, so that they can be saved!
     [SerializeField] public float m_damage = 0;
 
+    /// <summary>
+    /// [REQUIRED] Used to create a copy of the item. Make sure to set any unique values here!
+    /// </summary>
     public override Item CreateInstance()
     {
-        // Create base item
+        // [REQUIRED] Create base item
         RangedWeapon newItem = (RangedWeapon)base.CreateInstance();
 
-        // make RangedWeapon specific changes
+        // Setting unique values here:
+        // damage
         newItem.m_damage = m_damage;
 
         return newItem;
     }
 
-    #if UNITY_EDITOR
+    
     //Custom editor for this class
+    #if UNITY_EDITOR
     [CustomEditor(typeof(RangedWeapon))]
     public class WeaponEditor : ItemEditor
     {
         public override void OnInspectorGUI()
         {
-            // draw base editor (Item in this case)
+            // [REQUIRED] draw base editor (Item in this case)
             base.OnInspectorGUI();
-
-            // get the editor target
+            // [REQUIRED] get the editor target
             RangedWeapon rangedWeapon = (RangedWeapon)target;
 
             // red box for weapon stats
             GUI.backgroundColor = Color.red;
             GUILayout.BeginVertical("box");
             GUI.backgroundColor = Color.white;
-
             // bold center text
             GUILayout.Label("Weapon Item Stats", CustomEditorStuff.center_bold_label);
 
-            //damage
+            // [REQUIRED] damage
             rangedWeapon.m_damage = EditorGUILayout.FloatField("Damage: ", rangedWeapon.m_damage);
 
-            //end green box
+            //end red box
             GUILayout.EndVertical();
         }
     }
     #endif
-            
+
+
 }
