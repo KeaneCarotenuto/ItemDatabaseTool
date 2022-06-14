@@ -130,6 +130,8 @@ public class Item : ScriptableObject
     /// </summary>
     public void DestroyInstance()
     {
+        Debug.Log("Destroying instance of item: " + this.id);
+
         if (string.IsNullOrEmpty(instanceID))
         {
             return;

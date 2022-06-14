@@ -91,6 +91,9 @@ public class DatabaseWindow : EditorWindow {
         }
     }
 
+    /// <summary>
+    /// Draw the list of items
+    /// </summary>
     private void DrawList()
     {
         //draw scroll list of items
@@ -291,6 +294,8 @@ public class DatabaseWindow : EditorWindow {
             //popup to confirm
             if (EditorUtility.DisplayDialog("Delete Item", "Are you sure you want to delete " + _item.name + "?\nThis CANNOT be undone!", "DELETE", "KEEP"))
             {
+                Debug.Log("Deleting " + _item.name);
+
                 //delete from asset database
                 AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(_item));
                 //remove from list
@@ -332,6 +337,7 @@ public class DatabaseWindow : EditorWindow {
 
     /// <summary>
     /// Creates a new scriptable object item in unity
+    /// </summary>
     static public void CreateNewItem(string type)
     {
         // if path doesnt exist, create it
@@ -366,6 +372,9 @@ public class DatabaseWindow : EditorWindow {
         ItemDatabase.Refresh();
     }
 
+    /// <summary>
+    /// Creates a new Item Type in unity
+    /// </summary>
     private static void CreateNewItemType(string newItemTypeName)
     {
         // check if string is valid

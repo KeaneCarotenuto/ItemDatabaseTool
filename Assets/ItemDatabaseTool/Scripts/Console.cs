@@ -69,6 +69,9 @@ public class Console : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Forces user to start typing
+    /// </summary>
     public void StartTyping()
     {
         // select the box, start typing, and move cursor to end
@@ -77,6 +80,9 @@ public class Console : MonoBehaviour
         consoleInput.caretPosition = consoleInput.text.Length;
     }
 
+    /// <summary>
+    /// Trys to execute a command
+    /// </summary>
     public void TrySendCommand(string _command){
         // to lower
         _command = _command.ToLower();
@@ -155,7 +161,7 @@ public class Console : MonoBehaviour
             return;
         }
 
-        // "give inventoryID item_id amount?"
+        // "give inventoryID itemID amount?"
         if (split.Length >= 3 && split[0] == "give")
         {
             string inventoryID = split[1];
@@ -281,7 +287,7 @@ public class Console : MonoBehaviour
         "help",
         "list_inventories",
         "list_inventory inventoryID",
-        "give inventoryID item_id amount?",
+        "give inventoryID itemID amount?",
         "clear inventoryID",
         "save inventoryID",
         "load inventoryID",
@@ -290,6 +296,9 @@ public class Console : MonoBehaviour
         "restart"
     };
 
+    /// <summary>
+    /// Logs a message to the console
+    /// </summary>
     public void Log(string _text = "", bool _newLine = true)
     {
         if (!consoleLog) return;

@@ -295,6 +295,8 @@ public class ItemDatabase
     /// </summary>
     static public void DeleteListFromFile()
     {
+        Debug.Log("Deleting database");
+
         string path = GetSavePath();
         if (!Directory.Exists(path))
         {
@@ -316,6 +318,8 @@ public class ItemDatabase
     /// </summary>
     static public void DeleteListMetaDataFromFile()
     {
+        Debug.Log("Deleting database meta data");
+
         string path = GetSavePath();
         if (!Directory.Exists(path))
         {
@@ -334,6 +338,8 @@ public class ItemDatabase
 
     static public void CleanUpFiles()
     {
+        Debug.Log("Cleaning up files");
+
         // if directory does not exist, create it
         if (!Directory.Exists(Item.GetInstanceSavePath()))
         {
@@ -401,6 +407,7 @@ public class ItemDatabase
     /// </summary>
     static public void ResetDatabaseFolder()
     {
+        Debug.Log("Resetting database folder");
         DeleteListFromFile();
         DeleteListMetaDataFromFile();
         
@@ -455,6 +462,9 @@ public class ItemDatabase
         });
     }
 
+    /// <summary>
+    /// Validates all item ids.
+    /// </summary>
     static public void ValidateIDs() {
         #if UNITY_EDITOR
         // put selected id at the top (Reason: so that when we check for issues, it will be the first to change, in an attempt to not modify other items )

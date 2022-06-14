@@ -5,6 +5,9 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 
+/// <summary>
+/// Custom editor styles for easier styling.
+/// </summary>
 public class CustomEditorStuff
 {
     public static GUIStyle center_bold_label = new GUIStyle(EditorStyles.label) {
@@ -21,6 +24,9 @@ public class CustomEditorStuff
     };
 }
 
+/// <summary>
+/// ReadOnly attribute for serialized fields.
+/// </summary>
 public class ReadOnlyAttribute : PropertyAttribute
 {
 }
@@ -42,6 +48,11 @@ public class ReadOnlyDrawer : PropertyDrawer
      }
 }
 
+/// <summary>
+/// Custom Input Dialog for Unity Editor
+/// Retrieved From: https://forum.unity.com/threads/is-there-a-way-to-input-text-using-a-unity-editor-utility.473743/#post-7191802
+/// By User: https://forum.unity.com/members/vedran_m.4124355/
+/// </summary>
 public class EditorInputDialog : EditorWindow
 {
     string  description, inputText;

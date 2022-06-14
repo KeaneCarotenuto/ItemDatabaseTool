@@ -170,7 +170,8 @@ MonoBehaviour:
   m_slots:
   - typeFilter: []
     m_item: {fileID: 0}
-  - typeFilter: []
+  - typeFilter:
+    - RangedWeapon
     m_item: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
@@ -299,8 +300,7 @@ MonoBehaviour:
   - typeFilter:
     - RangedWeapon
     m_item: {fileID: 0}
-  - typeFilter:
-    - RangedWeapon
+  - typeFilter: []
     m_item: {fileID: 0}
 --- !u!4 &862048059
 Transform:
@@ -533,6 +533,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4706542289791131013, guid: 74e331f02c0146f4d996b834d4c948a9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4706542289791131013, guid: 74e331f02c0146f4d996b834d4c948a9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4706542289791131013, guid: 74e331f02c0146f4d996b834d4c948a9, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4706542290056309599, guid: 74e331f02c0146f4d996b834d4c948a9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0

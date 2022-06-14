@@ -155,16 +155,25 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Gets the save FOLDER path for this inventory.
+    /// </summary>
     public string GetSavePath()
     {
         return Application.dataPath + "/ItemDatabase/" + this.GetType().Name + id.ToString() + "/";
     }
 
+    /// <summary>
+    /// Gets the save FILE path for this inventory.
+    /// </summary>
     public string GetSaveFilePath()
     {
         return GetSavePath() + "/inventory.json";
     }
 
+    /// <summary>
+    /// Saves this inventory to file.
+    /// </summary>
     public void SaveInventory()
     {
         // if save path doesn't exist, create it
@@ -198,8 +207,12 @@ public class Inventory : MonoBehaviour
         file.Close();
     }
 
+    /// <summary>
+    /// Loads this inventory from file.
+    /// </summary>
     public void LoadInventory()
     {
+        // get file name
         string file = System.IO.File.ReadAllText(GetSaveFilePath());
 
         string[] fileNames = file.Split('\n');
@@ -236,6 +249,9 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clears all items from the inventory.
+    /// </summary>
     public void ClearInventory()
     {
         foreach (InventorySlot slot in m_slots)
@@ -244,6 +260,9 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Validates the ID of the inventory.
+    /// </summary>
     public void ValidateID(){
         string copy = id;
 
@@ -264,7 +283,10 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public static void AddInventory(Inventory inventory)
+    /// <summary>
+    /// Adds this inventory to the inventory list.
+    /// </summary>
+    private static void AddInventory(Inventory inventory)
     {
         if (allInventories.Contains(inventory))
         {
@@ -274,7 +296,10 @@ public class Inventory : MonoBehaviour
         allInventories.Add(inventory);
     }
 
-    public static void RemoveInventory(Inventory inventory)
+    /// <summary>
+    /// Removes this inventory from the inventory list.
+    /// </summary>
+    private static void RemoveInventory(Inventory inventory)
     {
         if (!allInventories.Contains(inventory))
         {
@@ -283,6 +308,9 @@ public class Inventory : MonoBehaviour
         allInventories.Remove(inventory);
     }
 
+    /// <summary>
+    /// Validates all inventory IDs.
+    /// </summary>
     static public void ValidateIDs(Inventory _selectedInventory = null) {
 
         #if UNITY_EDITOR
@@ -463,9 +491,6 @@ public class Inventory : MonoBehaviour
                 inventory.m_slots.Add(new InventorySlot());
                 EditorUtility.SetDirty(inventory);
             }
-
-            // count of all inventories
-            EditorGUILayout.LabelField("Total Inventories [" + Inventory.allInventories.Count + "]", CustomEditorStuff.bold_label);
 
             // save on change
             if (GUI.changed)
