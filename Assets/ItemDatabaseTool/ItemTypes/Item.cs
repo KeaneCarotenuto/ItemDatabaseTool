@@ -8,27 +8,37 @@ using System.Reflection;
 using System.Linq;
 using TMPro;
 using UnityEngine.SceneManagement;
-// json serialization
 
 #if UNITY_EDITOR
 using UnityEditor;
-
 #endif
+
 [Serializable]
 public class Item : ScriptableObject
 {
+    // List of all the item classes in the game
     [NonSerialized] public static readonly IEnumerable<System.Type> AllTypes;
 
+    /// <summary>
+    /// Gets the folder to save item instances to.
+    /// </summary>
     public static string GetInstanceSavePath(){
         return Application.dataPath + "/ItemDatabase/instances/";
     }
 
+    /// <summary>
+    /// Gets the potential file name for this item instance.
+    /// </summary>
     public string GetInstanceFileName(){
         return this.id + this.instanceID + ".json";
     }
 
+    /// <summary>
+    /// Constructor for Item class
+    /// </summary>
     static Item()
     {
+        // Keep track of all the item classes in the game
         System.Type type = typeof(Item);
         AllTypes = type.Assembly.GetTypes().Where(t => t.IsSubclassOf(type));
     }
@@ -45,6 +55,7 @@ public class Item : ScriptableObject
 
     [NonSerialized] private bool drawDefaultInspector = false;
 
+    //unique id of the item
     [SerializeField] private string m_id = "";
     [SerializeField] public string id
     {
@@ -56,6 +67,7 @@ public class Item : ScriptableObject
         }
     }
 
+    //unique instance id of the item
     [SerializeField] private string m_instanceID = "";
     [SerializeField] public string instanceID
     {
@@ -111,9 +123,11 @@ public class Item : ScriptableObject
         }
     }
 
-
     [SerializeField] public List<TagManager.Tag> m_tags = new List<TagManager.Tag>();
 
+    /// <summary>
+    /// Destroys the item instance, and deletes it from file.
+    /// </summary>
     public void DestroyInstance()
     {
         if (string.IsNullOrEmpty(instanceID))
@@ -185,6 +199,9 @@ public class Item : ScriptableObject
         return _item;
     }
 
+    /// <summary>
+    /// Validates the id of the item.
+    /// </summary>
     public void ValidateID(){
         //correct id
         //to lower
@@ -209,7 +226,7 @@ public class Item : ScriptableObject
         item.m_displayName = this.m_displayName;
         item.m_description = this.m_description;
         item.m_icon = this.m_icon;
-        // Make sure to COPY lists, not pass by reference
+        // NOTE: Make sure to COPY lists like below, not pass by reference
         item.m_tags = new List<TagManager.Tag>(this.m_tags);
 
         item.currentStackSize = this.m_currentStackSize;
@@ -291,8 +308,8 @@ public class Item : ScriptableObject
     }
 
 
-    #if UNITY_EDITOR
     //Custom editor for item
+    #if UNITY_EDITOR
     [CustomEditor(typeof(Item))]
     public class ItemEditor : Editor
     {
@@ -303,41 +320,51 @@ public class Item : ScriptableObject
             DrawUI();
         }
 
-        public void DrawUI()
+        /// <summary>
+        /// Draws the base UI for the item.
+        /// </summary>
+        private void DrawUI()
         {
             Item item = (Item)target;
 
-            // horiz
+            // Draw default inspector option
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             item.drawDefaultInspector = GUILayout.Toggle(item.drawDefaultInspector, "Default Inspector");
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
-
             if (item.drawDefaultInspector){
                 DrawDefaultInspector();
             }
 
 
+            //green box for base item class
             GUI.backgroundColor = Color.green;
-            //green box for item
             GUILayout.BeginVertical("box");
-            // bold text
-            GUILayout.Label("Base Item Stats", CustomEditorStuff.center_bold_label);
             GUI.backgroundColor = Color.white;
 
-            // horiz
+            // Top label
+            GUILayout.Label("Base Item Stats", CustomEditorStuff.center_bold_label);
+
+            // Parameters
             GUILayout.BeginHorizontal();
             item.id = EditorGUILayout.TextField("ID: ", item.id);
             // update file name button
             if (GUILayout.Button(new GUIContent("Update File Name", "Updates the file name to match the item id"), GUILayout.Width(120)))
             {
                 item.ValidateID();
+                string itemID = item.id;
 
                 //update file name
                 string path = AssetDatabase.GetAssetPath(item);
                 string newPath = path.Replace(item.id, item.id);
                 AssetDatabase.RenameAsset(path, item.id);
+
+                //update item id
+                item.id = itemID;
+
+                // set dirty
+                EditorUtility.SetDirty(item);
             }
             GUILayout.EndHorizontal();
             // disabled varint id
@@ -368,8 +395,7 @@ public class Item : ScriptableObject
             // end stack info box
             GUILayout.EndVertical();
 
-            //tags
-            // indent
+            //tags list
             EditorGUI.indentLevel++;
             showTags = EditorGUILayout.Foldout(showTags, "Tags", true, new GUIStyle(EditorStyles.foldout) { fontStyle = FontStyle.Bold});
             EditorGUI.indentLevel--;

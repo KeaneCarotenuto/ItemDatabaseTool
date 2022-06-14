@@ -102,7 +102,7 @@ public class Inventory : MonoBehaviour
         set
         {
             m_id = value;
-            Inventory.ValidateIDs(this);
+            ValidateID();
         }
     }
 
@@ -284,7 +284,14 @@ public class Inventory : MonoBehaviour
     }
 
     static public void ValidateIDs(Inventory _selectedInventory = null) {
+
         #if UNITY_EDITOR
+        // if unity is building, don't validate
+        if (EditorApplication.isCompiling)
+        {
+            return;
+        }
+
         // put selected id at the top (Reason: so that when we check for issues, it will be the first to change, in an attempt to not modify other items )
         if (_selectedInventory != null)
         {
@@ -335,8 +342,6 @@ public class Inventory : MonoBehaviour
                     else {
                         //add _1 to the number
                         allInventories[i].id = allInventories[i].id + "_1";
-
-                        ValidateIDs();
                     }
                 }
             }
@@ -370,8 +375,6 @@ public class Inventory : MonoBehaviour
                 EditorUtility.SetDirty(this);
             }
         }
-
-        ValidateIDs();
     }
 
     // custom editor
@@ -461,11 +464,14 @@ public class Inventory : MonoBehaviour
                 EditorUtility.SetDirty(inventory);
             }
 
+            // count of all inventories
+            EditorGUILayout.LabelField("Total Inventories [" + Inventory.allInventories.Count + "]", CustomEditorStuff.bold_label);
+
             // save on change
             if (GUI.changed)
             {
                 // validate id
-                inventory.ValidateID();
+                Inventory.ValidateIDs();
 
                 EditorUtility.SetDirty(inventory);
             }

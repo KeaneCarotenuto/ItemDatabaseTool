@@ -12,6 +12,7 @@ using UnityEditor;
 public class DatabaseWindow : EditorWindow {
 
     static string itemPath = "Assets/ItemDatabaseTool/Resources/Items/";
+    static string itemTypePath = "Assets/ItemDatabaseTool/ItemTypes/";
 
     static string searchText = "";
 
@@ -32,7 +33,19 @@ public class DatabaseWindow : EditorWindow {
     // Remake the database .json files
     [MenuItem("ItemDatabaseTool/Re-make Database folder")]
     private static void ResetDatabaseFolder() {
+        ItemDatabase.Refresh();
+
         ItemDatabase.ResetDatabaseFolder();
+    }
+
+    // Make new item type button
+    [MenuItem("ItemDatabaseTool/Make New Item Type")]
+    private static void MakeNewItemType() {
+        // popup window to get the name of the new item type
+        string newItemTypeName = EditorInputDialog.Show("New Item Type Name", "Enter the name of the new item type:", "");
+
+        // create the new item type
+        CreateNewItemType(newItemTypeName);
     }
 
     private void OnValidate() {
@@ -351,6 +364,63 @@ public class DatabaseWindow : EditorWindow {
         }
 
         ItemDatabase.Refresh();
+    }
+
+    private static void CreateNewItemType(string newItemTypeName)
+    {
+        // check if string is valid
+        if (string.IsNullOrEmpty(newItemTypeName))
+        {
+            return;
+        }
+
+        // if path doesnt exist, create it (itemTypePath)
+        if (!Directory.Exists(itemTypePath))
+        {
+            Directory.CreateDirectory(itemTypePath);
+        }
+
+        // create new .cs file for the new item type and add it to the project
+        string newItemTypeFilePath = itemTypePath + "/" + newItemTypeName + ".cs";
+        if (File.Exists(newItemTypeFilePath))
+        {
+            Debug.LogWarning("Item type with name " + newItemTypeName + " already exists.");
+            return;
+        }
+
+        // get template file
+        string templateFilePath = itemTypePath + "/" + "NewItemTypeTemplate";
+
+        // get template file content as list of lines
+        List<string> templateFileContent = new List<string>();
+
+        if (File.Exists(templateFilePath))
+        {
+            templateFileContent = File.ReadAllLines(templateFilePath).ToList();
+
+            //replace '[ITEM_TYPE]' with newItemTypeName
+            templateFileContent = templateFileContent.Select(line => line.Replace("[ITEM_TYPE]", newItemTypeName)).ToList();
+        }
+        else
+        {
+            Debug.LogError("Template file " + templateFilePath + " does not exist.");
+            return;
+        }
+
+        // create the new file and write the content
+        File.WriteAllLines(newItemTypeFilePath, templateFileContent);
+
+        // add the new file to the project
+        AssetDatabase.ImportAsset(newItemTypeFilePath);
+
+        // open the new file in the editor
+        AssetDatabase.OpenAsset(AssetDatabase.LoadAssetAtPath(newItemTypeFilePath, typeof(MonoScript)));
+
+        // refresh the database
+        ItemDatabase.Refresh();
+
+        // reset itemdatabase folder
+        ItemDatabase.ResetDatabaseFolder();
     }
 }
 
