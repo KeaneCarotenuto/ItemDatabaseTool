@@ -16,15 +16,11 @@ public class Inventory : MonoBehaviour
 {
     static public List<Inventory> allInventories = new List<Inventory>();
 
-    // constructor
-    public Inventory()
-    {
+    private void Awake() {
         AddInventory(this);
     }
 
-    // destructor
-    ~Inventory()
-    {
+    private void OnDestroy() {
         RemoveInventory(this);
     }
 
@@ -249,6 +245,8 @@ public class Inventory : MonoBehaviour
     }
 
     public void ValidateID(){
+        string copy = id;
+
         //correct id
         //to lower
         m_id = m_id.ToLower();
@@ -256,6 +254,14 @@ public class Inventory : MonoBehaviour
         m_id = Regex.Replace(m_id, @"[^a-zA-Z0-9_]", "");
         //replace space with _
         m_id = m_id.Replace(" ", "_");
+
+        if (copy != m_id)
+        {
+            #if UNITY_EDITOR
+            //set dirty
+            EditorUtility.SetDirty(this);
+            #endif
+        }
     }
 
     public static void AddInventory(Inventory inventory)
@@ -299,10 +305,15 @@ public class Inventory : MonoBehaviour
 
         //correct duplicate IDs
         for (int i = 0; i < allInventories.Count; i++) {
+            Inventory inventory = allInventories[i];
+            if (!inventory) continue;
+            
+            string copyID = inventory.id;
+
             for (int j = 0; j < allInventories.Count; j++) {
                 if (allInventories[i].id == allInventories[j].id && i != j) {
                     //check if last char is a number
-                    if (char.IsNumber(allInventories[i].id[allInventories[i].id.Length - 1])) {
+                    if (allInventories[i] && allInventories[i].id != "" && char.IsNumber(allInventories[i].id[allInventories[i].id.Length - 1])) {
                         //go backwards and count numbers
                         int count = 0;
                         for (int k = allInventories[i].id.Length - 1; k >= 0; k--) {
@@ -324,8 +335,18 @@ public class Inventory : MonoBehaviour
                     else {
                         //add _1 to the number
                         allInventories[i].id = allInventories[i].id + "_1";
+
+                        ValidateIDs();
                     }
                 }
+            }
+
+            if (copyID != inventory.id)
+            {
+                #if UNITY_EDITOR
+                //set dirty
+                EditorUtility.SetDirty(inventory);
+                #endif
             }
         }
     }
@@ -333,6 +354,11 @@ public class Inventory : MonoBehaviour
 
     #if UNITY_EDITOR
     private void OnValidate() {
+        // if not in scene, return
+        if (!this.gameObject.scene.IsValid()) return;
+
+        AddInventory(this);
+
         if (m_id == "") {
             m_id = System.Guid.NewGuid().ToString();
 
@@ -344,6 +370,8 @@ public class Inventory : MonoBehaviour
                 EditorUtility.SetDirty(this);
             }
         }
+
+        ValidateIDs();
     }
 
     // custom editor
@@ -419,6 +447,7 @@ public class Inventory : MonoBehaviour
                 if (GUILayout.Button(new GUIContent("X", "Remove this slot"), GUILayout.Width(20)))
                 {
                     inventory.m_slots.RemoveAt(i);
+                    EditorUtility.SetDirty(inventory);
                     break;
                 }
                 
@@ -429,16 +458,16 @@ public class Inventory : MonoBehaviour
             if (GUILayout.Button("Add Slot"))
             {
                 inventory.m_slots.Add(new InventorySlot());
+                EditorUtility.SetDirty(inventory);
             }
 
             // save on change
             if (GUI.changed)
             {
-                // if not in play mode, save (set dirty)
-                if (!Application.isPlaying)
-                {
-                    EditorUtility.SetDirty(this);
-                }
+                // validate id
+                inventory.ValidateID();
+
+                EditorUtility.SetDirty(inventory);
             }
         }
     }

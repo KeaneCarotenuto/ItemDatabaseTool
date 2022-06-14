@@ -386,6 +386,12 @@ public class Item : ScriptableObject
                     if (GUILayout.Button("X", GUILayout.Width(20)))
                     {
                         item.m_tags.RemoveAt(i);
+                        // save
+                        // if not in play mode, save (set dirty)
+                        if (!Application.isPlaying)
+                        {
+                            EditorUtility.SetDirty(this);
+                        }
                         break;
                     }
                     GUI.backgroundColor = Color.white;

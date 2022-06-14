@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -134,6 +135,20 @@ public class Console : MonoBehaviour
                 {
                     Log("- - " + item.name + " x" + item.currentStackSize);
                 }
+                else{
+                    Log("- - Empty, Filters[");
+                    if (inventory.slots[i].typeFilter.Count <= 0){
+                        Log("None", false);
+                    }
+                    else{
+                        // list filters
+                        for (int j = 0; j < inventory.slots[i].typeFilter.Count; j++)
+                        {
+                            Log(inventory.slots[i].typeFilter[j] + (j == inventory.slots[i].typeFilter.Count - 1 ? "" : ", "), false);
+                        }
+                    }
+                    Log("]", false);
+                }
             }
 
             Log();
@@ -243,6 +258,23 @@ public class Console : MonoBehaviour
             Log();
             return;
         }
+
+        // "quit"
+        if (split.Length == 1 && split[0] == "quit")
+        {
+            Application.Quit();
+            return;
+        }
+
+        // "restart"
+        if (split.Length == 1 && split[0] == "restart")
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            return;
+        }
+
+        // command not found
+        Log("- Command not found");
     }
 
     private List<string> commandList = new List<string>(){
@@ -253,7 +285,9 @@ public class Console : MonoBehaviour
         "clear inventoryID",
         "save inventoryID",
         "load inventoryID",
-        "list_database"
+        "list_database",
+        "quit",
+        "restart"
     };
 
     public void Log(string _text = "", bool _newLine = true)
