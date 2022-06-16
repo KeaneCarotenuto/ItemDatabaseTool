@@ -155,12 +155,16 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
+    public static string GetInventoryFolder(){
+        return Application.dataPath + "/ItemDatabase/inventories/";
+    }
+
     /// <summary>
     /// Gets the save FOLDER path for this inventory.
     /// </summary>
     public string GetSavePath()
     {
-        return Application.dataPath + "/ItemDatabase/" + this.GetType().Name + id.ToString() + "/";
+        return GetInventoryFolder() + this.GetType().Name + id.ToString() + "/";
     }
 
     /// <summary>

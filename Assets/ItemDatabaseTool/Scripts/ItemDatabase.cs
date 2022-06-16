@@ -12,7 +12,10 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 #endif
 
-[Serializable][InitializeOnLoad]
+#if UNITY_EDITOR
+[InitializeOnLoad]
+#endif
+[Serializable]
 public class ItemDatabase
 {
     // constructor
@@ -340,10 +343,15 @@ public class ItemDatabase
     {
         Debug.Log("Cleaning up files");
 
-        // if directory does not exist, create it
+        // if directory does not exist, create it (instance save folder)
         if (!Directory.Exists(Item.GetInstanceSavePath()))
         {
             Directory.CreateDirectory(Item.GetInstanceSavePath());
+        }
+        //if directory does not exist, create it (inventory save folder)
+        if (!Directory.Exists(Inventory.GetInventoryFolder()))
+        {
+            Directory.CreateDirectory(Inventory.GetInventoryFolder());
         }
 
         // delete all instance files that are not in any inventories and not in any save files
@@ -356,7 +364,7 @@ public class ItemDatabase
         // get all inventories in the game
         List<Inventory> inventories = Inventory.allInventories;
 
-        // get all inventory save files
+        // get all inventory save files by inventory name
         List<string> savedInstances = new List<string>();
         foreach (Inventory inventory in inventories)
         {
@@ -368,6 +376,22 @@ public class ItemDatabase
 
             // combine lines into savedInstances
             savedInstances = savedInstances.Union(lines).ToList();
+        }
+
+        // get all directories in the inventory folder
+        string[] directories = Directory.GetDirectories(Inventory.GetInventoryFolder());
+
+        foreach (string directory in directories)
+        {
+            List<string> files = Directory.GetFiles(directory, "inventory.json").ToList();
+
+            foreach (string file in files)
+            {
+                // get every line of the inventory save file
+                List<string> lines = File.ReadAllLines(file).ToList();
+
+                savedInstances = savedInstances.Union(lines).ToList();
+            }
         }
 
         // for each file in the instance folder, check if it is in the inventory or save files

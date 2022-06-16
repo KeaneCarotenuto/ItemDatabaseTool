@@ -282,6 +282,14 @@ public class Item : ScriptableObject
     public static Item Load(string _path, string _fileName)
     {
         Debug.Log("Trying to open" + _path + _fileName);
+
+        // if file doesn't exist, return null
+        if (!File.Exists(_path + _fileName))
+        {
+            Debug.Log("File doesn't exist");
+            return null;
+        }
+
         //read file
         FileStream file = File.Open(_path + _fileName, FileMode.Open);
         StreamReader reader = new StreamReader(file);
